@@ -1,0 +1,73 @@
+analisis offset asumiendo que no hay error en (snd_max-snd_una) y que la forma de la evolucion es independiente del valor de pipe.
+
+Array length = 138132
+>> 6927159-5186663
+
+ans =
+
+     1740496
+
+>> 1208881
+
+ans =
+
+     1208881
+
+>> a = 1740496
+
+a =
+
+     1740496
+
+>> diff = a
+
+diff =
+
+     1740496
+
+>> cwnd_prev = 1208881
+
+cwnd_prev =
+
+     1208881
+
+>> error = diff-cwnd_prev
+
+error =
+
+      531615
+
+>> current_pipe = 9.238*10^5
+
+current_pipe =
+
+      923800
+
+>> offset_pipe = current_pipe - error
+
+offset_pipe =
+
+      392185
+
+>> current_cwnd = 8.702*10^5
+
+current_cwnd =
+
+      870200
+
+>> offset_pipe - prev_cwnd/2
+Undefined function or variable 'prev_cwnd'.
+ 
+>> offset_pipe - cwnd_prev/2
+
+ans =
+
+  -2.1226e+05
+
+>> cwnd_prev/2-offset_pipe
+
+ans =
+
+   2.1226e+05
+
+>> Se concluye que pipe si estaria por debajo de cwnd pero la diferencia tampoco es baja, como suele verse

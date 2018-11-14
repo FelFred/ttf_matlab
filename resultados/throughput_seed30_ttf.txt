@@ -1,0 +1,87 @@
+
+dt_c1 =
+
+  249.7319
+
+
+dt_c2 =
+
+  248.4445
+
+
+loss_c1 =
+
+   506
+
+
+loss_c2 =
+
+   257
+
+
+total_c1 =
+
+       14209
+
+
+total_c2 =
+
+       13961
+
+
+p1 =
+
+    0.0356
+
+
+p2 =
+
+    0.0184
+
+
+throughput_simulado_c1 =
+
+   8.0086e+05
+
+
+throughput_simulado_c2 =
+
+   8.0501e+05
+
+Array length = 2505
+
+rtt1 =
+
+    0.1000
+
+
+rtt2 =
+
+    0.1500
+
+
+throughput_teo_c1 =
+
+   9.4756e+04
+
+
+throughput_teo_c2 =
+
+   8.7862e+04
+
+
+error_c1 =
+
+  745.1833
+
+
+error_c2 =
+
+  816.2242
+
+
+rate_error =
+
+    6.4557
+
+>> 
