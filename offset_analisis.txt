@@ -1,3 +1,4 @@
+// cambio test
 analisis offset asumiendo que no hay error en (snd_max-snd_una) y que la forma de la evolucion es independiente del valor de pipe.
 
 Array length = 138132
