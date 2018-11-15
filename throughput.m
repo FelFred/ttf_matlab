@@ -2,11 +2,47 @@
 clear
 clc
 
-%% Simulation parameters
+%% Get simulation parameters from opnet written files
 
-% RTT per connection
-rtt1 = 0.1
-rtt2 = 0.15
+% Read parameters file
+fileID = fopen('C:\params.txt');
+cur_line = fgetl(fileID);
+line_no = 1;
+while ischar(cur_line)
+    % Process current line
+    switch line_no
+        case 1
+            % Algorithm name
+            formatSpec = '%f';
+            line_data = textscan(cur_line,formatSpec);
+            alg_no = line_data{1};
+            switch alg_no
+                case 1
+                    alg_name = 'DropTail';
+                case 2
+                    alg_name = 'RED';
+                case 3
+                    alg_name = 'TTF';
+                otherwise
+                    disp('wrong alg_no')
+            end
+        case 2
+            % RTT per connection
+            formatSpec = '%f %f';
+            line_data = textscan(cur_line,formatSpec);
+            rtt1 = line_data{1};
+            rtt2 = line_data{2};
+        case 3
+            disp('3 is not coded yet!')
+        otherwise
+            disp('no use for this line')
+    end
+     
+    % Read next line
+    cur_line = fgetl(fileID);
+    line_no = line_no + 1;
+end
+fclose(fileID);
 
 % FTP file size
 file_size = 200*10^6;
