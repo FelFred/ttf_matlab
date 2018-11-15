@@ -74,8 +74,8 @@ fprintf('Avg cwnd c1 = %d, Avg throughput = %f\n', avg_cwnd_c1, throughput_sim_c
 fprintf('Avg cwnd c2 = %d, Avg throughput = %f\n', avg_cwnd_c2, throughput_sim_c2)
 
 % Theoretical throughout per connection
-throughput_teo_c1 = 1500*(sqrt(3/(2*p1)))/rtt1
-throughput_teo_c2 = 1500*(sqrt(3/(2*p2)))/rtt2
+throughput_teo_c1 = 8*1500*(sqrt(3/(2*p1)))/rtt1
+throughput_teo_c2 = 8*1500*(sqrt(3/(2*p2)))/rtt2
 
 % Error between simulated throughput and theoretical throughput in percentage
 error_c1 = abs(1- throughput_sim_c1/throughput_teo_c1)*100
@@ -92,8 +92,8 @@ y_array_fair = [0 1];
 
 % Maximum theoretical throughputs
 p_intr = 0.001
-max_th_c1 = 1500*(sqrt(3/(2*p_intr)))/rtt1
-max_th_c2 = 1500*(sqrt(3/(2*p_intr)))/rtt2
+max_th_c1 = 8*1500*(sqrt(3/(2*p_intr)))/rtt1
+max_th_c2 = 8*1500*(sqrt(3/(2*p_intr)))/rtt2
 rel_th_c1 = throughput_sim_c1/max_th_c1;
 rel_th_c2 = throughput_sim_c2/max_th_c1;
 
