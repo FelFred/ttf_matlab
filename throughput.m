@@ -140,3 +140,11 @@ rel_th_c2 = throughput_sim_c2/max_th_c1;
 plot(rel_th_c2, rel_th_c1, 'ko')
 
 
+%% Save results in .mat file
+
+f1 = 'alg';
+f2 = 'rtts';
+rtt_cell = {{rtt1, rtt2}};
+alg_cell = {{alg_name}};
+results = struct(f1,alg_cell,f2,rtt_cell)
+save('results.mat', 'results')
