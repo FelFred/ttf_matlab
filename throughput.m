@@ -144,7 +144,9 @@ plot(rel_th_c2, rel_th_c1, 'ko')
 
 f1 = 'alg';
 f2 = 'rtts';
+f3 = 'cwnd';
 rtt_cell = {{rtt1, rtt2}};
 alg_cell = {{alg_name}};
-results = struct(f1,alg_cell,f2,rtt_cell)
+cwnd_cell = {{C, C_0}};
+results = struct(f1,alg_cell,f2,rtt_cell, f3, cwnd_cell);
 save('results.mat', 'results')
