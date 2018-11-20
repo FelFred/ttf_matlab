@@ -44,8 +44,8 @@ fileID = fopen('C:\Felipe\parse_test.txt');
 formatSpec = '%s'; %  instancia, cwnd, time
 P = textscan(fileID,formatSpec);
 text = fileread('C:\Felipe\parse_test.txt');
-S = strsplit(text, 'newdata')
+S = strsplit(text, 'newdata\r\n')
 format = '%f %f';
-d1 = textscan(S{2},format,'Delimiter','\n');
-d2 = textscan(S{3},format,'Delimiter','\n');
+d1 = textscan(S{2},format,'Delimiter','\r\n');
+d2 = textscan(S{3},format,'Delimiter','\r\n');
 fclose(fileID);
