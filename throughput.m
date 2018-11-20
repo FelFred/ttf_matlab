@@ -1,4 +1,4 @@
-% testing deleting .mat file peofslfk
+% testing deleting .mat file from remote repo and adding gitignore
 
 %close all
 clear
