@@ -89,7 +89,7 @@ C_0 = textscan(fileID,formatSpec,'Delimiter','\n');
 fclose(fileID);
 
 fileID = fopen('C:\qstats.txt');
-formatSpec = '%f %f %f'; %  cwnd, time
+formatSpec = '%f %f %f %f'; %  cwnd, time
 Q = textscan(fileID,formatSpec,'Delimiter','\n');
 fclose(fileID);
 
@@ -176,7 +176,7 @@ dt_cell = {{dt_c1, dt_c2}};
 th_cell = {{th_sim_c1, th_sim_c2}};
 gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}};
 loss_cell = {{p1, p2, p_intr}};
-q_cell = {{Q{1}, Q{2}, Q{3}}};
+q_cell = {{Q{1}, Q{2}, Q{3}, Q{4}}};
 results = struct(f1, alg_cell, f2, rtt_cell, f3, fsize_cell, f4, cwnd_cell, f5, dt_cell, f6, th_cell, f7, gp_cell, f8, loss_cell, f9, q_cell);
 save('results.mat', 'results')
 
