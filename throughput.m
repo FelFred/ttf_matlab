@@ -1,7 +1,7 @@
 %close all
 clear
 clc
-
+tic
 %% Get simulation parameters from opnet written files
 
 % Read parameters file
@@ -86,6 +86,11 @@ formatSpec = '%f %f'; %  cwnd, time
 C_0 = textscan(fileID,formatSpec,'Delimiter','\n');
 fclose(fileID);
 
+fileID = fopen('C:\qstats.txt');
+formatSpec = '%f %f %f'; %  cwnd, time
+Q = textscan(fileID,formatSpec,'Delimiter','\n');
+fclose(fileID);
+
 %% Get stats from data
 
 % length = length(P{1});
@@ -122,7 +127,7 @@ throughput_teo_c2 = 8*1500*(sqrt(3/(2*p2)))/rtt2
 
 % Error between simulated throughput and theoretical throughput in percentage
 error_c1 = abs(1- th_sim_c1/throughput_teo_c1)*100
-error_c2 = abs(1- tht_sim_c2/throughput_teo_c2)*100
+error_c2 = abs(1- th_sim_c2/throughput_teo_c2)*100
 
 % Error in the loss rate (simulation vs algorithm formula)
 rate_error = abs(1-sqrt((loss_c1/loss_c2))/(rtt2/rtt1))*100
@@ -158,14 +163,18 @@ f5 = 'conn_dur';
 f6 = 'throughput';
 f7 = 'goodput';
 f8 = 'loss';
+f9 = 'qstats';
 
 rtt_cell = {{rtt1, rtt2}};
 alg_cell = {{alg_name}};
 fsize_cell = {{f_size}};
 cwnd_cell = {{C, C_0}};
 dt_cell = {{dt_c1, dt_c2}};
-th_cell = {{throughput_sim_c1, throughput_sim_c2}};
+th_cell = {{th_sim_c1, th_sim_c2}};
 gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}};
 loss_cell = {{p1, p2, p_intr}};
-results = struct(f1, alg_cell, f2, rtt_cell, f3, fsize_cell, f4, cwnd_cell, f5, dt_cell, f6, th_cell, f7, gp_cell, f8, loss_cell);
+q_cell = {{Q{1}, Q{2}, Q{3}}};
+results = struct(f1, alg_cell, f2, rtt_cell, f3, fsize_cell, f4, cwnd_cell, f5, dt_cell, f6, th_cell, f7, gp_cell, f8, loss_cell, f9, q_cell);
 save('results.mat', 'results')
+
+toc
