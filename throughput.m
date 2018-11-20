@@ -131,6 +131,7 @@ throughput_teo_c2 = 8*1500*(sqrt(3/(2*p2)))/rtt2
 error_c1 = abs(1- th_sim_c1/throughput_teo_c1)*100
 error_c2 = abs(1- th_sim_c2/throughput_teo_c2)*100
 
+
 % Error in the loss rate (simulation vs algorithm formula)
 rate_error = abs(1-sqrt((loss_c1/loss_c2))/(rtt2/rtt1))*100
 
