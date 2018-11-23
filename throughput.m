@@ -6,6 +6,8 @@ clc
 tic
 %% Get simulation parameters from opnet written files
 
+overhead_factor = (1500+8)/1460;
+
 % Read parameters file
 fileID = fopen('C:\params.txt');
 cur_line = fgetl(fileID);
@@ -35,6 +37,10 @@ while ischar(cur_line)
             rtt1 = line_data{1};
             rtt2 = line_data{2};
         case 3
+            % traffic distribution
+            bg_dist = cur_line;
+        case 4
+            % Intrinsic loss
             formatSpec = '%f';
             line_data = textscan(cur_line,formatSpec);
             p_intr = line_data{1};
@@ -92,6 +98,28 @@ fileID = fopen('C:\qstats.txt');
 formatSpec = '%f %f %f %f'; %  cwnd, time
 Q = textscan(fileID,formatSpec,'Delimiter','\n');
 fclose(fileID);
+
+fileID = fopen('C:\oprtt_c1.txt');
+formatSpec = '%f %f'; %  cwnd, time
+Ro1 = textscan(fileID,formatSpec,'Delimiter','\n');
+fclose(fileID);
+
+fileID = fopen('C:\oprtt_c2.txt');
+formatSpec = '%f %f'; %  cwnd, time
+Ro2 = textscan(fileID,formatSpec,'Delimiter','\n');
+fclose(fileID);
+
+fileID = fopen('C:\est0.txt');
+formatSpec = '%f %f %f'; %  cwnd, time
+Rc1 = textscan(fileID,formatSpec,'Delimiter','\n');
+fclose(fileID);
+
+fileID = fopen('C:\est.txt');
+formatSpec = '%f %f %f'; %  cwnd, time
+Rc2 = textscan(fileID,formatSpec,'Delimiter','\n');
+fclose(fileID);
+
+
 
 %% Get stats from data
 
@@ -160,24 +188,62 @@ plot(th_sim_c2, th_sim_c1, 'ko') % sin normalizacion
 
 f1 = 'alg';
 f2 = 'rtts';
-f3 = 'file_size';
-f4 = 'cwnd';
-f5 = 'conn_dur';
-f6 = 'throughput';
-f7 = 'goodput';
-f8 = 'loss';
-f9 = 'qstats';
+f3 = 'bg_dist';
+f4 = 'file_size';
+f5 = 'cwnd';
+f6 = 'conn_dur';
+f7 = 'throughput';
+f8 = 'goodput';
+f9 = 'loss';
+f10 = 'qstats';
+f11 = 'rtt_est';
+f12 = 'th_eff';
 
 rtt_cell = {{rtt1, rtt2}};
 alg_cell = {{alg_name}};
+bg_cell = {{bg_dist}};
 fsize_cell = {{f_size}};
 cwnd_cell = {{C, C_0}};
 dt_cell = {{dt_c1, dt_c2}};
 th_cell = {{th_sim_c1, th_sim_c2}};
 gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}};
+th_eff_cell = {{goodput_simulado_c1*overhead_factor, goodput_simulado_c2*overhead_factor}};
 loss_cell = {{p1, p2, p_intr}};
+est_cell = {Ro1{1}, Ro1{2}, Ro2{1}, Ro2{2}, Rc1{1}, Rc1{2}, Rc2{1}, Rc2{2}};
 q_cell = {{Q{1}, Q{2}, Q{3}, Q{4}}};
-results = struct(f1, alg_cell, f2, rtt_cell, f3, fsize_cell, f4, cwnd_cell, f5, dt_cell, f6, th_cell, f7, gp_cell, f8, loss_cell, f9, q_cell);
-save('results.mat', 'results')
+results = struct(f1, alg_cell, f2, rtt_cell, f3, bg_cell, f4, fsize_cell, f5, cwnd_cell, f6, dt_cell, f7, th_cell, f8, gp_cell, f9, loss_cell, f10, q_cell, f11, est_cell, f12, th_eff_cell);
+%date_str = date;
+date_time = datetime('now');
+DateString = datestr(date_time);
+newStr = strrep(newStr,' ','_');
+newStr = strrep(newStr,':','-');
+algStr = num2str(alg_no);
+str_2 = strcat(newStr, algStr, '.mat');
+save(str_2, 'results')
 
 toc
+
+figure()
+plot(Q{4}, Q{1})
+hold on
+plot(Q{4}, Q{2}, 'r')
+title('instantaneous vs averaged queue size')
+hold off
+
+figure()
+plot(Ro1{2}, Ro1{1})
+hold on
+title('rtt opnet vs ttf c1')
+plot(Rc1{2}, Rc1{1}, 'r')
+hold off
+
+figure()
+plot(Ro2{2}, Ro2{1})
+hold on
+title('rtt opnet vs ttf c2')
+plot(Rc2{2}, Rc2{1}, 'r')
+
+figure()
+title('queuing delay vs time')
+plot(Q{4}, Q{3})
+
