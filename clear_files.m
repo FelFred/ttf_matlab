@@ -37,7 +37,9 @@ fclose(fileID);
 fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est.txt', 'w');
 fclose(fileID);
 
-% Queue data files
+% Queue stats file
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\qstats.txt', 'w');
+fclose(fileID);
 
-
+%Prints?
 disp('Files have been cleared/initialized')

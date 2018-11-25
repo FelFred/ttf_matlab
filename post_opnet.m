@@ -69,6 +69,10 @@ rc2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est.txt');
 rc1_split = strsplit(rc1_text, delim);
 rc2_split = strsplit(rc2_text, delim);
 
+% Queue statistics
+qstats_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\qstats.txt');
+qstats_split = strsplit(qstats_text, delim);
+
 %% Loop over simulations
 
 for i = 1:n_sim
@@ -187,6 +191,11 @@ for i = 1:n_sim
     formatSpec = '%f %f %f';
     Rc2 = textscan(lines,formatSpec,'Delimiter','\n');
     
+    %% Qstats data
+    lines = qstats_split{i+1}; 
+    formatSpec = '%f %f %f %f';
+    Q = textscan(lines,formatSpec,'Delimiter','\n');
+    
     
     %% Fill cells
     rtt_cell = {{rtt1, rtt2}}; %
@@ -199,9 +208,20 @@ for i = 1:n_sim
     gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}}; %
     th_eff_cell = {{eff_th_c1, eff_th_c2}}; %
     loss_cell = {{p1, p2, p_intr}}; %
-    est_cell = {Ro1, Ro2, Rc1, Rc2}; %
-%     q_cell = {{Q{1}, Q{2}, Q{3}, Q{4}}};
-    %% Save structure
+    est_cell = {{Ro1, Ro2, Rc1, Rc2}}; %
+    q_cell = {{Q}}; %
+    
+    %% Save structure 
+    
+    results = struct(f1, alg_cell, f2, rtt_cell, f3, bg_cell, f4, fsize_cell, f5, cwnd_cell, f6, dt_cell, f7, th_cell, f8, gp_cell, f9, loss_cell, f10, q_cell, f11, est_cell, f12, th_eff_cell);
+    date_time = datetime('now');
+    DateString = datestr(date_time);
+    newStr = strrep(DateString,' ','_');
+    newStr = strrep(newStr,':','-');
+    algStr = num2str(alg_no);
+    str_2 = strcat(newStr, algStr, '.mat');
+    save(str_2, 'results')
+    
 end
 
 
