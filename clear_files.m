@@ -20,4 +20,10 @@ fclose(fileID);
 fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\begin_end_c2.txt', 'w');
 fclose(fileID);
 
+% Loss data and total packets filesz
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\loss_data.txt', 'w');
+fclose(fileID);
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\total.txt', 'w');
+fclose(fileID);
+
 disp('Files have been cleared/initialized')

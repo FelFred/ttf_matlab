@@ -47,13 +47,16 @@ C1_split = strsplit(C1_text, delim);
 C2_split = strsplit(C2_text, delim);
 
 % Connections duration
-
-% Cwnd stats
 D1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\begin_end_c1.txt');
 D2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\begin_end_c2.txt');
 D1_split = strsplit(D1_text, delim);
 D2_split = strsplit(D2_text, delim);
 
+% Loss data and total pkts
+loss_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\loss_data.txt');
+total_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\total.txt');
+loss_split = strsplit(loss_text, delim);
+total_split = strsplit(total_text, delim);
 
 %% Loop over simulations
 
@@ -140,6 +143,22 @@ for i = 1:n_sim
     eff_th_c1 = goodput_simulado_c1*overhead_factor;
     eff_th_c2 = goodput_simulado_c2*overhead_factor;    
     
+    %% Loss data
+    lines = loss_split{i+1}; 
+    formatSpec = '%f';
+    loss = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    lines = total_split{i+1};
+    formatSpec = '%f';
+    total = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    loss_c1 = loss{1}(1)+loss{1}(3)+loss{1}(5);
+    loss_c2 = loss{1}(2)+loss{1}(4)+loss{1}(6);
+    total_c1 = total{1}(1);
+    total_c2 = total{1}(2);
+    p1 = loss_c1/total_c1;
+    p2 = loss_c2/total_c2;
+    
     %% Fill cells
     rtt_cell = {{rtt1, rtt2}}; %
     alg_cell = {{alg_name}}; %
@@ -147,10 +166,10 @@ for i = 1:n_sim
     fsize_cell = {{f_size}}; %
     cwnd_cell = {{C, C_0}}; %
     dt_cell = {{dt_c1, dt_c2}}; %
-    th_cell = {{th_sim_c1, th_sim_c2}};
-    gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}};
-    th_eff_cell = {{eff_th_c1, eff_th_c2}};
-%     loss_cell = {{p1, p2, p_intr}};
+    th_cell = {{th_sim_c1, th_sim_c2}}; %
+    gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}}; %
+    th_eff_cell = {{eff_th_c1, eff_th_c2}}; %
+    loss_cell = {{p1, p2, p_intr}};
 %     est_cell = {Ro1{1}, Ro1{2}, Ro2{1}, Ro2{2}, Rc1{1}, Rc1{2}, Rc2{1}, Rc2{2}};
 %     q_cell = {{Q{1}, Q{2}, Q{3}, Q{4}}};
     %% Save structure
