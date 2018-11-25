@@ -46,6 +46,14 @@ C2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\cwndstat_c2.
 C1_split = strsplit(C1_text, delim);
 C2_split = strsplit(C2_text, delim);
 
+% Connections duration
+
+% Cwnd stats
+D1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\begin_end_c1.txt');
+D2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\begin_end_c2.txt');
+D1_split = strsplit(D1_text, delim);
+D2_split = strsplit(D2_text, delim);
+
 
 %% Loop over simulations
 
@@ -97,19 +105,32 @@ for i = 1:n_sim
     %% Cwnd stats
     lines = C1_split{i+1}; 
     formatSpec = '%f %f';
-    C = textscan(lines,formatSpec,'Delimiter','\n');
+    C_0 = textscan(lines,formatSpec,'Delimiter','\n');
     
     lines = C2_split{i+1};
     formatSpec = '%f %f';
-    C_0 = textscan(lines,formatSpec,'Delimiter','\n');
+    C = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    %% Connections duration
+    lines = D1_split{i+1}; 
+    formatSpec = '%f';
+    D_0 = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    lines = D2_split{i+1};
+    formatSpec = '%f';
+    D = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    dt_c1 = D_0{1}(end) - D_0{1}(end-1)
+    dt_c2 = D{1}(end) - D{1}(end-1)
+    
     
     %% Fill cells
     rtt_cell = {{rtt1, rtt2}}; %
     alg_cell = {{alg_name}}; %
     bg_cell = {{bg_dist}}; %
     fsize_cell = {{f_size}}; %
-   cwnd_cell = {{C, C_0}}; %
-%     dt_cell = {{dt_c1, dt_c2}};
+    cwnd_cell = {{C, C_0}}; %
+    dt_cell = {{dt_c1, dt_c2}};
 %     th_cell = {{th_sim_c1, th_sim_c2}};
 %     gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}};
 %     th_eff_cell = {{goodput_simulado_c1*overhead_factor, goodput_simulado_c2*overhead_factor}};

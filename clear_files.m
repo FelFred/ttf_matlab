@@ -14,4 +14,10 @@ fclose(fileID);
 fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\cwndstat_c2.txt', 'w');
 fclose(fileID);
 
+% Conn duration files
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\begin_end_c1.txt', 'w');
+fclose(fileID);
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\begin_end_c2.txt', 'w');
+fclose(fileID);
+
 disp('Files have been cleared/initialized')
