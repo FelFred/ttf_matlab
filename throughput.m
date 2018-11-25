@@ -139,15 +139,15 @@ p1 = loss_c1/total_c1
 p2 = loss_c2/total_c2
 
 % Goodput per connection
-goodput_simulado_c1 = f_size/dt_c1
-goodput_simulado_c2 = f_size/dt_c2
+goodput_simulado_c1 = 8*f_size/dt_c1 % should be in bytes without x8 factor
+goodput_simulado_c2 = 8*f_size/dt_c2 % should be in bytes without x8 factor
 
 % Throughout per connection
 avg_cwnd_c1 = mean(C_0{1});
 avg_cwnd_c2 = mean(C{1});
 %plot(C{2}, C{1})  
-th_sim_c1 = avg_cwnd_c1/rtt1;
-th_sim_c2 = avg_cwnd_c2/rtt2;
+th_sim_c1 = 8*avg_cwnd_c1/rtt1; % should be in bytes without x8 factor
+th_sim_c2 = 8*avg_cwnd_c2/rtt2; % should be in bytes without x8 factor
 fprintf('Avg cwnd c1 = %d, Avg throughput = %f\n', avg_cwnd_c1, th_sim_c1)
 fprintf('Avg cwnd c2 = %d, Avg throughput = %f\n', avg_cwnd_c2, th_sim_c2)
 

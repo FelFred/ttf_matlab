@@ -120,8 +120,8 @@ for i = 1:n_sim
     formatSpec = '%f';
     D = textscan(lines,formatSpec,'Delimiter','\n');
     
-    dt_c1 = D_0{1}(end) - D_0{1}(end-1)
-    dt_c2 = D{1}(end) - D{1}(end-1)
+    dt_c1 = D_0{1}(end) - D_0{1}(end-1);
+    dt_c2 = D{1}(end) - D{1}(end-1);
     
     
     %% Fill cells
@@ -130,10 +130,10 @@ for i = 1:n_sim
     bg_cell = {{bg_dist}}; %
     fsize_cell = {{f_size}}; %
     cwnd_cell = {{C, C_0}}; %
-    dt_cell = {{dt_c1, dt_c2}};
-%     th_cell = {{th_sim_c1, th_sim_c2}};
-%     gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}};
-%     th_eff_cell = {{goodput_simulado_c1*overhead_factor, goodput_simulado_c2*overhead_factor}};
+    dt_cell = {{dt_c1, dt_c2}}; %
+    th_cell = {{th_sim_c1, th_sim_c2}};
+    gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}};
+    th_eff_cell = {{goodput_simulado_c1*overhead_factor, goodput_simulado_c2*overhead_factor}};
 %     loss_cell = {{p1, p2, p_intr}};
 %     est_cell = {Ro1{1}, Ro1{2}, Ro2{1}, Ro2{2}, Rc1{1}, Rc1{2}, Rc2{1}, Rc2{2}};
 %     q_cell = {{Q{1}, Q{2}, Q{3}, Q{4}}};
