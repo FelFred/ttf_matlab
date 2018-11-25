@@ -40,6 +40,12 @@ F2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\fsize_c2.txt
 F1_split = strsplit(F1_text, delim);
 F2_split = strsplit(F1_text, delim);
 
+% Cwnd stats
+C1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\cwndstat_c1.txt');
+C2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\cwndstat_c2.txt');
+C1_split = strsplit(C1_text, delim);
+C2_split = strsplit(C2_text, delim);
+
 
 %% Loop over simulations
 
@@ -47,9 +53,9 @@ for i = 1:n_sim
     %% Params.txt     
    
     lines = strsplit(S_params{i+1}, '\r\n');
-    for i = 1:length(lines)
-        tline = lines{i};
-        line_no = i;
+    for j = 1:length(lines)
+        tline = lines{j};
+        line_no = j;
         switch line_no
             case 1
                 formatSpec = '%f';
@@ -88,13 +94,21 @@ for i = 1:n_sim
     line_data = textscan(tline,formatSpec);
     f_size = 8*line_data{1};
     
+    %% Cwnd stats
+    lines = C1_split{i+1}; 
+    formatSpec = '%f %f';
+    C = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    lines = C2_split{i+1};
+    formatSpec = '%f %f';
+    C_0 = textscan(lines,formatSpec,'Delimiter','\n');
     
     %% Fill cells
     rtt_cell = {{rtt1, rtt2}}; %
     alg_cell = {{alg_name}}; %
     bg_cell = {{bg_dist}}; %
     fsize_cell = {{f_size}}; %
-%     cwnd_cell = {{C, C_0}};
+   cwnd_cell = {{C, C_0}}; %
 %     dt_cell = {{dt_c1, dt_c2}};
 %     th_cell = {{th_sim_c1, th_sim_c2}};
 %     gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}};
