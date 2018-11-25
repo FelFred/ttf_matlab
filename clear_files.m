@@ -20,10 +20,24 @@ fclose(fileID);
 fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\begin_end_c2.txt', 'w');
 fclose(fileID);
 
-% Loss data and total packets filesz
+% Loss data and total packets files
 fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\loss_data.txt', 'w');
 fclose(fileID);
 fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\total.txt', 'w');
 fclose(fileID);
+
+% RTT estimations files
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\oprtt_c1.txt', 'w');
+fclose(fileID);
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\oprtt_c2.txt', 'w');
+fclose(fileID);
+
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est0.txt', 'w');
+fclose(fileID);
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est.txt', 'w');
+fclose(fileID);
+
+% Queue data files
+
 
 disp('Files have been cleared/initialized')

@@ -58,6 +58,17 @@ total_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\total.txt
 loss_split = strsplit(loss_text, delim);
 total_split = strsplit(total_text, delim);
 
+% Rtt estimation
+ro1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\oprtt_c1.txt');
+ro2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\oprtt_c2.txt');
+ro1_split = strsplit(ro1_text, delim);
+ro2_split = strsplit(ro2_text, delim);
+
+rc1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est0.txt');
+rc2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est.txt');
+rc1_split = strsplit(rc1_text, delim);
+rc2_split = strsplit(rc2_text, delim);
+
 %% Loop over simulations
 
 for i = 1:n_sim
@@ -159,6 +170,24 @@ for i = 1:n_sim
     p1 = loss_c1/total_c1;
     p2 = loss_c2/total_c2;
     
+    %% RTT estimation data
+    lines = ro1_split{i+1}; 
+    formatSpec = '%f %f';
+    Ro1 = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    lines = ro2_split{i+1};
+    formatSpec = '%f %f';
+    Ro2 = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    lines = rc1_split{i+1};     
+    formatSpec = '%f %f %f';
+    Rc1 = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    lines = rc2_split{i+1};
+    formatSpec = '%f %f %f';
+    Rc2 = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    
     %% Fill cells
     rtt_cell = {{rtt1, rtt2}}; %
     alg_cell = {{alg_name}}; %
@@ -169,8 +198,8 @@ for i = 1:n_sim
     th_cell = {{th_sim_c1, th_sim_c2}}; %
     gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}}; %
     th_eff_cell = {{eff_th_c1, eff_th_c2}}; %
-    loss_cell = {{p1, p2, p_intr}};
-%     est_cell = {Ro1{1}, Ro1{2}, Ro2{1}, Ro2{2}, Rc1{1}, Rc1{2}, Rc2{1}, Rc2{2}};
+    loss_cell = {{p1, p2, p_intr}}; %
+    est_cell = {Ro1, Ro2, Rc1, Rc2}; %
 %     q_cell = {{Q{1}, Q{2}, Q{3}, Q{4}}};
     %% Save structure
 end
