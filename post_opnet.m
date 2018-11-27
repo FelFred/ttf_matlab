@@ -5,6 +5,13 @@ clear
 clc
 tic
 
+%% Create folder with current date and time
+date_time = datetime('now');
+    DateString = datestr(date_time);
+    newStr = strrep(DateString,' ','_');
+    newStr = strrep(newStr,':','-');
+
+
 %% Define structure format (fields)
 
 f1 = 'alg';                                      
