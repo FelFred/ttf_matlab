@@ -8,8 +8,8 @@ tic
 %% Create folder with current date and time
 date_time = datetime('now');
 DateString = datestr(date_time);
-newStr = strrep(DateString,' ','_');
-dirStr = strrep(newStr,':','-');
+DateStr = strrep(DateString,' ','_');
+dirStr = strrep(DateStr,':','-');
 mkdir('./resultados/', dirStr);
 
 
@@ -28,6 +28,7 @@ f10 = 'qstats';
 f11 = 'rtt_est';
 f12 = 'th_eff';
 f13 = 'timeouts';
+f14 = 'red_params';
 
 %% Determine number of simulations based on delimiters in params file
 
@@ -123,6 +124,10 @@ for i = 1:n_sim
                 formatSpec = '%f';                
                 line_data = textscan(tline,formatSpec);
                 p_intr = line_data{1};
+            case 5
+                formatSpec = '%f %f %f %f %f';
+                line_data = textscan(tline,formatSpec);
+                red_params = line_data; % smoothing, rec_red, min_th, max_p, gentle_flag                 
             otherwise
                 %disp('no use for this line')
         end
@@ -234,18 +239,19 @@ for i = 1:n_sim
     loss_cell = {{p1, p2, p_intr}}; %
     est_cell = {{Ro1, Ro2, Rc1, Rc2}}; %
     q_cell = {{Q}}; %
-    to_cell = {{T, T_0}};
+    to_cell = {{T, T_0}}; %
+    rtt_parameters = {{red_params}}; 
     
     %% Save structure 
     
-    results_struct = struct(f1, alg_cell, f2, rtt_cell, f3, bg_cell, f4, fsize_cell, f5, cwnd_cell, f6, dt_cell, f7, th_cell, f8, gp_cell, f9, loss_cell, f10, q_cell, f11, est_cell, f12, th_eff_cell, f13, to_cell);
-    date_time = datetime('now');
-    DateString = datestr(date_time);
-    newStr = strrep(DateString,' ','_');
-    newStr = strrep(newStr,':','-');
+    results_struct = struct(f1, alg_cell, f2, rtt_cell, f3, bg_cell, f4, fsize_cell, f5, cwnd_cell, f6, dt_cell, f7, th_cell, f8, gp_cell, f9, loss_cell, f10, q_cell, f11, est_cell, f12, th_eff_cell, f13, to_cell, f14, redp_cell);
+%   date_time = datetime('now');
+%   DateString = datestr(date_time);
+%   newStr = strrep(DateString,' ','_');
+%   newStr = strrep(newStr,':','-');
     algStr = num2str(alg_no);
     results_path = strcat('./resultados/', dirStr,'/');
-    full_path = [results_path newStr ' ' algStr ' ' num2str(i) '.mat'];
+    full_path = [results_path dirStr ' ' algStr ' ' num2str(i) '.mat'];
     %full_path = strcat(results_path, newStr, blanks(1), algStr, blanks(1),num2str(i), '.mat');
     save(full_path, 'results_struct')
     
