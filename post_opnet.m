@@ -220,7 +220,7 @@ for i = 1:n_sim
     newStr = strrep(newStr,':','-');
     algStr = num2str(alg_no);
     str_2 = strcat(newStr, algStr, '.mat');
-    save(str_2, 'results')
+   % save(str_2, 'results')
     
 end
 
