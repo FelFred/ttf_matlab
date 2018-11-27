@@ -41,5 +41,11 @@ fclose(fileID);
 fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\qstats.txt', 'w');
 fclose(fileID);
 
+% Timeouts per connection files
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\timeouts_c1.txt', 'w');
+fclose(fileID);
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\timeouts_c2.txt', 'w');
+fclose(fileID);
+
 %Prints?
 disp('Files have been cleared/initialized')

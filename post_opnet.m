@@ -7,9 +7,10 @@ tic
 
 %% Create folder with current date and time
 date_time = datetime('now');
-    DateString = datestr(date_time);
-    newStr = strrep(DateString,' ','_');
-    newStr = strrep(newStr,':','-');
+DateString = datestr(date_time);
+newStr = strrep(DateString,' ','_');
+dirStr = strrep(newStr,':','-');
+mkdir('./resultados/', dirStr);
 
 
 %% Define structure format (fields)
@@ -220,14 +221,16 @@ for i = 1:n_sim
     
     %% Save structure 
     
-    results = struct(f1, alg_cell, f2, rtt_cell, f3, bg_cell, f4, fsize_cell, f5, cwnd_cell, f6, dt_cell, f7, th_cell, f8, gp_cell, f9, loss_cell, f10, q_cell, f11, est_cell, f12, th_eff_cell);
+    results_struct = struct(f1, alg_cell, f2, rtt_cell, f3, bg_cell, f4, fsize_cell, f5, cwnd_cell, f6, dt_cell, f7, th_cell, f8, gp_cell, f9, loss_cell, f10, q_cell, f11, est_cell, f12, th_eff_cell);
     date_time = datetime('now');
     DateString = datestr(date_time);
     newStr = strrep(DateString,' ','_');
     newStr = strrep(newStr,':','-');
     algStr = num2str(alg_no);
-    str_2 = strcat(newStr, algStr, '.mat');
-   % save(str_2, 'results')
+    results_path = strcat('./resultados/', dirStr,'/');
+    full_path = [results_path newStr ' ' algStr ' ' num2str(i) '.mat'];
+    %full_path = strcat(results_path, newStr, blanks(1), algStr, blanks(1),num2str(i), '.mat');
+    save(full_path, 'results_struct')
     
 end
 
