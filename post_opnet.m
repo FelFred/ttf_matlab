@@ -240,7 +240,7 @@ for i = 1:n_sim
     est_cell = {{Ro1, Ro2, Rc1, Rc2}}; %
     q_cell = {{Q}}; %
     to_cell = {{T, T_0}}; %
-    rtt_parameters = {{red_params}}; 
+    redp_cell = {{red_params}}; 
     
     %% Save structure 
     
