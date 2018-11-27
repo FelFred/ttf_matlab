@@ -27,6 +27,7 @@ f9 = 'loss';
 f10 = 'qstats';
 f11 = 'rtt_est';
 f12 = 'th_eff';
+f13 = 'timeouts';
 
 %% Determine number of simulations based on delimiters in params file
 
@@ -80,6 +81,12 @@ rc2_split = strsplit(rc2_text, delim);
 % Queue statistics
 qstats_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\qstats.txt');
 qstats_split = strsplit(qstats_text, delim);
+
+% Rtt estimation
+to1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\timeouts_c1.txt');
+to2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\timeouts_c2.txt');
+to1_split = strsplit(to1_text, delim);
+to2_split = strsplit(to2_text, delim);
 
 %% Loop over simulations
 
@@ -204,6 +211,15 @@ for i = 1:n_sim
     formatSpec = '%f %f %f %f';
     Q = textscan(lines,formatSpec,'Delimiter','\n');
     
+    %% Timeouts data
+    lines = to1_split{i+1}; 
+    formatSpec = '%f %f';
+    T_0 = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    lines = to2_split{i+1};
+    formatSpec = '%f %f';
+    T = textscan(lines,formatSpec,'Delimiter','\n');
+    
     
     %% Fill cells
     rtt_cell = {{rtt1, rtt2}}; %
@@ -218,10 +234,11 @@ for i = 1:n_sim
     loss_cell = {{p1, p2, p_intr}}; %
     est_cell = {{Ro1, Ro2, Rc1, Rc2}}; %
     q_cell = {{Q}}; %
+    to_cell = {{T, T_0}};
     
     %% Save structure 
     
-    results_struct = struct(f1, alg_cell, f2, rtt_cell, f3, bg_cell, f4, fsize_cell, f5, cwnd_cell, f6, dt_cell, f7, th_cell, f8, gp_cell, f9, loss_cell, f10, q_cell, f11, est_cell, f12, th_eff_cell);
+    results_struct = struct(f1, alg_cell, f2, rtt_cell, f3, bg_cell, f4, fsize_cell, f5, cwnd_cell, f6, dt_cell, f7, th_cell, f8, gp_cell, f9, loss_cell, f10, q_cell, f11, est_cell, f12, th_eff_cell, f13, to_cell);
     date_time = datetime('now');
     DateString = datestr(date_time);
     newStr = strrep(DateString,' ','_');
