@@ -121,13 +121,13 @@ for i = 1:n_sim
             case 3
                 bg_dist = tline;
             case 4
-                formatSpec = '%f';                
-                line_data = textscan(tline,formatSpec);
-                p_intr = line_data{1};
-            case 5
                 formatSpec = '%f %f %f %f %f';
                 line_data = textscan(tline,formatSpec);
-                red_params = line_data; % smoothing, rec_red, min_th, max_p, gentle_flag                 
+                red_params = line_data; % smoothing, rec_red, min_th, max_p, gentle_flag               
+            case 5
+                formatSpec = '%f';                
+                line_data = textscan(tline,formatSpec);
+                p_intr = line_data{1};               
             otherwise
                 %disp('no use for this line')
         end

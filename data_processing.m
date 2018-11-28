@@ -8,7 +8,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '28-Nov-2018_12-32-08';
+datasetStr = '28-Nov-2018_15-25-43';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -145,8 +145,8 @@ hold off
 
 % Plot queueing_delay / (avg) queue size for every algorithm
 figure()
-title('Queue size average and std through simulation')
 errorbar(1,dt_qs(1), dt_qs(2), 'rx')
+title('Queue size average and std through simulation')
 ylim([0 100])
 hold on
 errorbar(2,red_qs(1), red_qs(2), 'kx')
