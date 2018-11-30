@@ -1,3 +1,9 @@
+%% Functions
+
+
+
+
+%%
 % This code was developed to process the data of a set of 12 simulations (3 algorithms, 2 values for RTT2 and 2 values of bg traffic interarrival time)
 % The whole set of data comes from 1 seed (not clear how to read seed from opnet)
 
@@ -8,7 +14,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '28-Nov-2018_15-25-43';
+datasetStr = '29-Nov-2018_23-39-33';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -118,7 +124,14 @@ red_qs = mean(red_q_array,1);
 ttf_qs = mean(ttf_q_array,1);
 
 %% Get avg and std for RTT (opnet and ttf estimation)
-    
+
+%% Get timeout data arrays
+c1_timeouts = zeros(n_seeds,1);
+c2_timeouts = zeros(n_seeds,1);
+for l = 1:n_sim
+    c1_timeouts(l) = length(results_cell{l}.timeouts{1}{1}) - 1;    
+    c2_timeouts(l) = length(results_cell{l}.timeouts{2}{1}) - 1;
+end
 
 %% Plot data
 
@@ -160,8 +173,23 @@ hold off
 % errorbar()
 
 % Plot cwnd (must be tested to achieve a meaningful figure)
+sim_number = 2;
+c1_cwnd = results_cell{sim_number}.cwnd{1};
+c2_cwnd = results_cell{sim_number}.cwnd{2};
+figure()
+subplot(2,1,1)
+plot(c1_cwnd{2}, c1_cwnd{1})
+subplot(2,1,2)
+plot(c2_cwnd{2}, c2_cwnd{1})
 
-
+% Plot timeouts per connection vs simulation
+sim_array = 1:15;
+timeouts_array = horzcat(c1_timeouts, c2_timeouts);
+figure()
+bar(sim_array, timeouts_array)
+title('Timeouts per connection vs simulation number')
+xlabel('Simulation Number')
+ylabel('Timeouts')
 
 %% Return to previous folder
 
