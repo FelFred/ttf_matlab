@@ -47,5 +47,8 @@ fclose(fileID);
 fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\timeouts_c2.txt', 'w');
 fclose(fileID);
 
+% Loss pdf
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\loss_pdf.txt', 'w');
+fclose(fileID);
 %Prints?
 disp('Files have been cleared/initialized')
