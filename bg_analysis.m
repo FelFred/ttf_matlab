@@ -1,5 +1,6 @@
-% This code was developed to process the data of a set of 12 simulations (3 algorithms, and X seeds)
-
+% This code was developed to process the data of a set of X simulations,
+% where X is the number of bg traffic distributions used.
+% The whole set of data comes from 1 seed
 
 clear all
 close all
