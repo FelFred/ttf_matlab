@@ -9,7 +9,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '30-Nov-2018_22-34-17';
+datasetStr = '01-Dec-2018_19-34-34';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -123,7 +123,7 @@ legend('Algorithm')
 hold off
 
 % Plot cwnd (must be tested to achieve a meaningful figure)
-sim_number = 6;
+sim_number = 9;
 c1_cwnd = results_cell{sim_number}.cwnd{1};
 c2_cwnd = results_cell{sim_number}.cwnd{2};
 figure()
@@ -165,8 +165,8 @@ plot(results_cell{1}.qstats{1}{4}, results_cell{1}.qstats{1}{2})
 
 %% Plot loss pdf 
 
-sim_number = 9;
-pdf_data = [results_cell{9}.loss_pdf{1}{1} results_cell{9}.loss_pdf{1}{2}]
+sim_number = 1;
+pdf_data = [results_cell{sim_number}.loss_pdf{1}{1} results_cell{sim_number}.loss_pdf{1}{2}]
 [~,idx] = sort(pdf_data(:,1)); % sort just the first column
 sorted_pdf = pdf_data(idx,:);   % sort the whole matrix using the sort indices
 
