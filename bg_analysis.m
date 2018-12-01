@@ -105,8 +105,8 @@ end
 % Plot "th1" vs "th2" (with "th" = th, gp or eff_th)
 gp_array = squeeze(th_array(3,:,:))';
 figure()
-title('Goodput(c1,c2) for different simulations')
 bar(bg_array, gp_array)
+title('Goodput(c1,c2) for different pkt iat')
 xlabel('Simulation')
 ylabel('Goodput[bits]')
 
