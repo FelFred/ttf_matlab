@@ -165,6 +165,16 @@ plot(results_cell{1}.qstats{1}{4}, results_cell{1}.qstats{1}{2})
 
 %% Plot loss pdf 
 
+sim_number = 9;
+pdf_data = [results_cell{9}.loss_pdf{1}{1} results_cell{9}.loss_pdf{1}{2}]
+[~,idx] = sort(pdf_data(:,1)); % sort just the first column
+sorted_pdf = pdf_data(idx,:);   % sort the whole matrix using the sort indices
+
+figure()
+plot(sorted_pdf(:,1), sorted_pdf(:,2))
+title('Loss pdf')
+xlabel('Avg queue size')
+ylabel('Loss probability')
 
 %% Return to previous folder
 
