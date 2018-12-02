@@ -165,7 +165,7 @@ plot(results_cell{1}.qstats{1}{4}, results_cell{1}.qstats{1}{2})
 
 %% Plot loss pdf 
 
-sim_number = 9;
+sim_number = 1;
 pdf_data = [results_cell{sim_number}.loss_pdf{1}{1} results_cell{sim_number}.loss_pdf{1}{2}]
 [~,idx] = sort(pdf_data(:,1)); % sort just the first column
 sorted_pdf = pdf_data(idx,:);   % sort the whole matrix using the sort indices
@@ -178,22 +178,92 @@ ylabel('Loss probability')
 
 %% Plot rtt estimations from tcp and ttf
 
-sim_number = 9;
+%sim_number = 1;
+
+oprtt_c1_time = results_cell{sim_number}.rtt_est{1}{2};
+oprtt_c1_data = results_cell{sim_number}.rtt_est{1}{1};
+oprtt_c2_time = results_cell{sim_number}.rtt_est{2}{2};
+oprtt_c2_data = results_cell{sim_number}.rtt_est{2}{1};
+
+ttf_c1_time = results_cell{sim_number}.rtt_est{3}{2};
+ttf_c1_data = results_cell{sim_number}.rtt_est{3}{1};
+ttf_c2_time = results_cell{sim_number}.rtt_est{4}{2};
+ttf_c2_data = results_cell{sim_number}.rtt_est{4}{1};
 
 figure()
 subplot(2,1,1)
-plot(results_cell{sim_number}.rtt_est{1}{2}, results_cell{sim_number}.rtt_est{1}{1})
+plot(oprtt_c1_time, oprtt_c1_data)
 subplot(2,1,2)
-plot(results_cell{sim_number}.rtt_est{3}{2}, results_cell{sim_number}.rtt_est{3}{1})
+plot(ttf_c1_time, ttf_c1_data)
 
 figure()
 subplot(2,1,1)
-plot(results_cell{sim_number}.rtt_est{2}{2}, results_cell{sim_number}.rtt_est{2}{1})
+plot(oprtt_c2_time, oprtt_c2_data)
 subplot(2,1,2)
-plot(results_cell{sim_number}.rtt_est{4}{2}, results_cell{sim_number}.rtt_est{4}{1})
+plot(ttf_c2_time, ttf_c2_data)
 
+%% Plot distance (in time units) between rtt samples
 
+oprtt_c1_len = length(oprtt_c1_time);
+oprtt_c2_len = length(oprtt_c2_time);
 
+ttf_c1_len = length(ttf_c1_time);
+ttf_c2_len = length(ttf_c2_time);
+
+oprtt_c1_diff = zeros(oprtt_c1_len-1,1);
+oprtt_c2_diff = zeros(oprtt_c2_len-1,1);
+ttf_c1_diff = zeros(ttf_c1_len-1,1);
+ttf_c2_diff = zeros(ttf_c2_len-1,1);
+
+% oprtt_c1_diff(1) = oprtt_c1_time(1);
+% oprtt_c2_diff(1) = oprtt_c2_time(1);
+% ttf_c1_diff(1) = oprtt_c1_time(1);
+% ttf_c2_diff(1) = oprtt_c1_time(1);
+
+for i = 2:oprtt_c1_len
+    oprtt_c1_diff(i-1) = oprtt_c1_time(i)-oprtt_c1_time(i-1);    
+end
+
+for i = 2:oprtt_c2_len
+    oprtt_c2_diff(i-1) = oprtt_c2_time(i)-oprtt_c2_time(i-1);    
+end
+
+for i = 2:ttf_c1_len
+    ttf_c1_diff(i-1) = ttf_c1_time(i)-ttf_c1_time(i-1);    
+end
+
+for i = 2:ttf_c2_len
+    ttf_c2_diff(i-1) = ttf_c2_time(i)-ttf_c2_time(i-1);    
+end
+
+figure()
+subplot(2,1,1)
+plot(oprtt_c1_time(2:end), oprtt_c1_diff)
+subplot(2,1,2)
+plot(ttf_c1_time(2:end), ttf_c1_diff)
+
+figure()
+subplot(2,1,1)
+plot(oprtt_c2_time(2:end), oprtt_c2_diff)
+subplot(2,1,2)
+plot(ttf_c2_time(2:end), ttf_c2_diff)
+
+%% Plot ttf rtt estimation with counter info
+
+ttf_c1_counter = results_cell{sim_number}.rtt_est{3}{3};
+ttf_c2_counter = results_cell{sim_number}.rtt_est{4}{3};
+
+figure()
+subplot(2,1,1)
+plot(ttf_c1_time, ttf_c1_data)
+subplot(2,1,2)
+plot(ttf_c1_time, ttf_c1_counter)
+
+figure()
+subplot(2,1,1)
+plot(ttf_c2_time, ttf_c2_data)
+subplot(2,1,2)
+plot(ttf_c2_time, ttf_c2_counter)
 
 %% Return to previous folder
 
