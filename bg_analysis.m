@@ -9,7 +9,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '01-Dec-2018_19-34-34';
+datasetStr = '01-Dec-2018_21-38-41';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -115,15 +115,15 @@ hold on
 x_plot = squeeze(th_array(3,2,:));
 y_plot = squeeze(th_array(3,1,:));
 plot(x_plot, y_plot, 'r-o', 'MarkerSize', 10)
-xlim([10^5 10^7])
-ylim([10^5 10^7])
+xlim([10^5 2*10^7])
+ylim([10^5 2*10^7])
 title('Goodput per connection (fairness)')
-plot([10^5 10^7], [10^5 10^7], 'm--')
-legend('Algorithm')
+plot([10^5 2*10^7], [10^5 2*10^7], 'm--')
+legend('TTF')
 hold off
 
 % Plot cwnd (must be tested to achieve a meaningful figure)
-sim_number = 9;
+sim_number = 1;
 c1_cwnd = results_cell{sim_number}.cwnd{1};
 c2_cwnd = results_cell{sim_number}.cwnd{2};
 figure()
@@ -165,16 +165,35 @@ plot(results_cell{1}.qstats{1}{4}, results_cell{1}.qstats{1}{2})
 
 %% Plot loss pdf 
 
-sim_number = 1;
+sim_number = 9;
 pdf_data = [results_cell{sim_number}.loss_pdf{1}{1} results_cell{sim_number}.loss_pdf{1}{2}]
 [~,idx] = sort(pdf_data(:,1)); % sort just the first column
 sorted_pdf = pdf_data(idx,:);   % sort the whole matrix using the sort indices
 
 figure()
-plot(sorted_pdf(:,1), sorted_pdf(:,2))
+plot(sorted_pdf(:,1), sorted_pdf(:,2), 'x')
 title('Loss pdf')
 xlabel('Avg queue size')
 ylabel('Loss probability')
+
+%% Plot rtt estimations from tcp and ttf
+
+sim_number = 9;
+
+figure()
+subplot(2,1,1)
+plot(results_cell{sim_number}.rtt_est{1}{2}, results_cell{sim_number}.rtt_est{1}{1})
+subplot(2,1,2)
+plot(results_cell{sim_number}.rtt_est{3}{2}, results_cell{sim_number}.rtt_est{3}{1})
+
+figure()
+subplot(2,1,1)
+plot(results_cell{sim_number}.rtt_est{2}{2}, results_cell{sim_number}.rtt_est{2}{1})
+subplot(2,1,2)
+plot(results_cell{sim_number}.rtt_est{4}{2}, results_cell{sim_number}.rtt_est{4}{1})
+
+
+
 
 %% Return to previous folder
 
