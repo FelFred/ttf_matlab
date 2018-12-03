@@ -9,7 +9,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '02-Dec-2018_20-13-59';
+datasetStr = '03-Dec-2018_00-43-48';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -165,7 +165,8 @@ plot(results_cell{1}.qstats{1}{4}, results_cell{1}.qstats{1}{2})
 
 %% Plot loss pdf 
 
-sim_number = 1;
+
+%sim_number = 1;
 pdf_data = [results_cell{sim_number}.loss_pdf{1}{1} results_cell{sim_number}.loss_pdf{1}{2}]
 [~,idx] = sort(pdf_data(:,1)); % sort just the first column
 sorted_pdf = pdf_data(idx,:);   % sort the whole matrix using the sort indices
