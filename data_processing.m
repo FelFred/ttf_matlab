@@ -1,5 +1,16 @@
-% This code was developed to process the data of a set of 12 simulations (3 algorithms, and X seeds)
+%% Code description
+%{
+This code was developed to process the data of a set of 12 simulations (3 algorithms, and X seeds)
 
+Outputs:
+-
+-
+-
+
+%}
+
+
+%% Clean stuff
 
 clear all
 close all
@@ -8,7 +19,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '03-Dec-2018_20-12-01';
+datasetStr = '04-Dec-2018_16-00-55';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path

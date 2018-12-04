@@ -1,7 +1,19 @@
-% This code was developed to process the data of a set of X simulations,
-% where X is the number of bg traffic distributions used.
-% The whole set of data comes from 1 seed
+%% Code description
+%{
+ This code was developed to process the data of a set of X simulations, where X is the number of bg traffic distributions used.
+ The whole set of data comes from 1 seed.
 
+Outputs:
+-
+-
+-
+
+%}
+ 
+
+
+
+%% Clean stuff
 clear all
 close all
 clc
@@ -9,7 +21,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '03-Dec-2018_00-43-48';
+datasetStr = '04-Dec-2018_16-00-55';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
