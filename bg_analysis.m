@@ -19,6 +19,7 @@ Outputs:
                 This data is also from the specific simulation used for figs 3 and 8
 - Figs 11-12:   Time distance between samples for c2. Opnet vs ttf
 - Figs 13-14:   Ttf rtt estimation for c1. Counter info below
+- Fig 15:       Goodput ratio (gp1/gp2)
 
 %}
 
@@ -30,7 +31,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '04-Dec-2018_16-00-55';
+datasetStr = '04-Dec-2018_18-00-44';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -130,6 +131,15 @@ bar(bg_array, gp_array)
 title('Goodput(c1,c2) for different pkt iat')
 xlabel('Simulation')
 ylabel('Goodput[bits]')
+
+gp_ratio = gp_array(:,1)./gp_array(:,2)
+figure(15)
+xlabel('Simulation')
+ylabel('Goodput ratio (gp1/gp2)')
+bar(bg_array, gp_ratio)
+title('Fairness per simulation')
+hold on
+plot(bg_array, ones(length(bg_array),1), 'rx--')
 
 figure(2)
 hold on
