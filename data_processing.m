@@ -2,11 +2,18 @@
 %{
 This code was developed to process the data of a set of 12 simulations (3 algorithms, and X seeds)
 
-Outputs:
--
--
--
+Inputs:
+- 1 specific scenario
+- 3 algorithms (DT, RED , TTF)
+- N seeds
 
+Outputs:
+- Fig 1:        Goodput(c1,c2) for DT, RED, TTF
+- Fig 2:        Fairness graph for 3 algorithms (using goodput)
+- Fig 3:        Errorbar plot for 3 algorithms, using avg and std of avg queue size
+- Fig 4:        Cwnd for both connections of sim number of specific simulation
+- Fig 5:        Timeouts for both connections per simulation
+- Commented:    Some plots that are in bg_analysis, should be deleted
 %}
 
 
@@ -143,13 +150,13 @@ end
 % Plot "th1" vs "th2" (with "th" = th, gp or eff_th)
 gp_array = [dt_th(3,:); red_th(3,:); ttf_th(3,:)];
 algorithms = categorical({'DropTail','RED','TTF'});
-figure()
+figure(1)
 title('Goodput(c1,c2) for DT, RED, TTF')
 bar(algorithms, gp_array)
 xlabel('Algorithm')
 ylabel('Goodput[bits]')
 
-figure()
+figure(2)
 plot(dt_th(3,2), dt_th(3,1), 'ro', 'MarkerSize', 10)
 xlim([10^5 2*10^7])
 ylim([10^5 2*10^7])
@@ -162,7 +169,7 @@ legend('Droptail','RED', 'TTF')
 hold off
 
 % Plot queueing_delay / (avg) queue size for every algorithm
-figure()
+figure(3)
 errorbar(1,dt_qs(1), dt_qs(2), 'rx')
 title('Queue size average and std through simulation')
 ylim([0 100])
@@ -181,16 +188,17 @@ hold off
 sim_number = 11;
 c1_cwnd = results_cell{sim_number}.cwnd{1};
 c2_cwnd = results_cell{sim_number}.cwnd{2};
-figure()
+figure(4)
 subplot(2,1,1)
 plot(c1_cwnd{2}, c1_cwnd{1})
+title(['Cwnd for both connections of sim number ' num2char(sim_num)])
 subplot(2,1,2)
 plot(c2_cwnd{2}, c2_cwnd{1})
 
 % Plot timeouts per connection vs simulation
 sim_array = 1:15;
 timeouts_array = horzcat(c1_timeouts, c2_timeouts);
-figure()
+figure(5)
 bar(sim_array, timeouts_array)
 title('Timeouts per connection vs simulation number')
 xlabel('Simulation Number')
@@ -221,17 +229,17 @@ ylabel('Timeouts')
 % errorbar(bg_array, q_array, qstd_array)
 % title('Average queue vs pkt_iat');
 
-figure()
-subplot(2,1,1)
-plot(results_cell{7}.qstats{1}{4}, results_cell{7}.qstats{1}{1})
-subplot(2,1,2)
-plot(results_cell{7}.qstats{1}{4}, results_cell{7}.qstats{1}{2})
-
-figure()
-subplot(2,1,1)
-plot(results_cell{11}.qstats{1}{4}, results_cell{11}.qstats{1}{1})
-subplot(2,1,2)
-plot(results_cell{11}.qstats{1}{4}, results_cell{11}.qstats{1}{2})
+% figure()
+% subplot(2,1,1)
+% plot(results_cell{7}.qstats{1}{4}, results_cell{7}.qstats{1}{1})
+% subplot(2,1,2)
+% plot(results_cell{7}.qstats{1}{4}, results_cell{7}.qstats{1}{2})
+% 
+% figure()
+% subplot(2,1,1)
+% plot(results_cell{11}.qstats{1}{4}, results_cell{11}.qstats{1}{1})
+% subplot(2,1,2)
+% plot(results_cell{11}.qstats{1}{4}, results_cell{11}.qstats{1}{2})
 %% Return to previous folder
 
 cd ..

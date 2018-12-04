@@ -3,15 +3,24 @@
  This code was developed to process the data of a set of X simulations, where X is the number of bg traffic distributions used.
  The whole set of data comes from 1 seed.
 
+Inputs:
+- 1 specific scenario
+- X pkt iat(interarrival time) values (lower values equal more pkts per second)    
+
 Outputs:
--
--
--
+- Fig 1:        Goodput (c1,c2) vs pkt_iat
+- Fig 2:        Fairness graph (trajectory given by different pkt_iat values)
+- Fig 3:        Cwnd vs time of both connections for a particular simulation (fixed pkt_iat)
+- Fig 4:        Timeouts per connection vs pkt_iat
+- Fig 5:        Average queue size errorbar plot vs pkt_iat
+- Figs 6-7:     Instantaneous queue size vs smoothed queue size (avg'd) for 2 particular simulations 
+- Fig 8:        Loss pdf for the same simulation used for fig 3
+- Figs 9-10:    Opnet vs ttf rtt estimations for both c1 and c2 respectively.
+                This data is also from the specific simulation used for figs 3 and 8
+- Figs 11-12:   Time distance between samples for c2. Opnet vs ttf
+- Figs 13-14:   Ttf rtt estimation for c1. Counter info below
 
 %}
- 
-
-
 
 %% Clean stuff
 clear all
@@ -116,13 +125,13 @@ end
 
 % Plot "th1" vs "th2" (with "th" = th, gp or eff_th)
 gp_array = squeeze(th_array(3,:,:))';
-figure()
+figure(1)
 bar(bg_array, gp_array)
 title('Goodput(c1,c2) for different pkt iat')
 xlabel('Simulation')
 ylabel('Goodput[bits]')
 
-figure()
+figure(2)
 hold on
 x_plot = squeeze(th_array(3,2,:));
 y_plot = squeeze(th_array(3,1,:));
@@ -138,16 +147,17 @@ hold off
 sim_number = 1;
 c1_cwnd = results_cell{sim_number}.cwnd{1};
 c2_cwnd = results_cell{sim_number}.cwnd{2};
-figure()
+figure(3)
 subplot(2,1,1)
 plot(c1_cwnd{2}, c1_cwnd{1})
+title(['cwnd of sim ' num2str(sim_number) ', pkt iat = ' num2str(bg_array(sim_number))])
 subplot(2,1,2)
 plot(c2_cwnd{2}, c2_cwnd{1})
 
 % Plot timeouts per connection vs simulation
 sim_array = 1:n_sim;
 timeouts_array = horzcat(c1_timeouts, c2_timeouts);
-figure()
+figure(4)
 bar(sim_array, timeouts_array)
 title('Timeouts per connection vs simulation number')
 xlabel('Simulation Number')
@@ -155,21 +165,17 @@ ylabel('Timeouts')
 
 %% Plot avg queue size vs bg traffic (RED_TTF)
 
-% figure()
-% plot(bg_array, q_array)
-% title('Average queue vs pkt_iat');
-
-figure()
+figure(5)
 errorbar(bg_array, q_array, qstd_array)
 title('Average queue vs pkt_iat');
 
-figure()
+figure(6)
 subplot(2,1,1)
 plot(results_cell{9}.qstats{1}{4}, results_cell{9}.qstats{1}{1})
 subplot(2,1,2)
 plot(results_cell{9}.qstats{1}{4}, results_cell{9}.qstats{1}{2})
 
-figure()
+figure(7)
 subplot(2,1,1)
 plot(results_cell{1}.qstats{1}{4}, results_cell{1}.qstats{1}{1})
 subplot(2,1,2)
@@ -177,13 +183,12 @@ plot(results_cell{1}.qstats{1}{4}, results_cell{1}.qstats{1}{2})
 
 %% Plot loss pdf 
 
-
 %sim_number = 1;
 pdf_data = [results_cell{sim_number}.loss_pdf{1}{1} results_cell{sim_number}.loss_pdf{1}{2}]
 [~,idx] = sort(pdf_data(:,1)); % sort just the first column
 sorted_pdf = pdf_data(idx,:);   % sort the whole matrix using the sort indices
 
-figure()
+figure(8)
 plot(sorted_pdf(:,1), sorted_pdf(:,2), 'x')
 title('Loss pdf')
 xlabel('Avg queue size')
@@ -203,15 +208,17 @@ ttf_c1_data = results_cell{sim_number}.rtt_est{3}{1};
 ttf_c2_time = results_cell{sim_number}.rtt_est{4}{2};
 ttf_c2_data = results_cell{sim_number}.rtt_est{4}{1};
 
-figure()
+figure(9)
 subplot(2,1,1)
 plot(oprtt_c1_time, oprtt_c1_data)
+title('Opnet vs ttf rtt estimations for c1')
 subplot(2,1,2)
 plot(ttf_c1_time, ttf_c1_data)
 
-figure()
+figure(10)
 subplot(2,1,1)
 plot(oprtt_c2_time, oprtt_c2_data)
+title('Opnet vs ttf rtt estimations for c2')
 subplot(2,1,2)
 plot(ttf_c2_time, ttf_c2_data)
 
@@ -249,15 +256,17 @@ for i = 2:ttf_c2_len
     ttf_c2_diff(i-1) = ttf_c2_time(i)-ttf_c2_time(i-1);    
 end
 
-figure()
+figure(11)
 subplot(2,1,1)
 plot(oprtt_c1_time(2:end), oprtt_c1_diff)
+title('Time distance between samples for c1. Opnet vs ttf')
 subplot(2,1,2)
 plot(ttf_c1_time(2:end), ttf_c1_diff)
 
-figure()
+figure(12)
 subplot(2,1,1)
 plot(oprtt_c2_time(2:end), oprtt_c2_diff)
+title('Time distance between samples for c2. Opnet vs ttf')
 subplot(2,1,2)
 plot(ttf_c2_time(2:end), ttf_c2_diff)
 
@@ -266,15 +275,17 @@ plot(ttf_c2_time(2:end), ttf_c2_diff)
 ttf_c1_counter = results_cell{sim_number}.rtt_est{3}{3};
 ttf_c2_counter = results_cell{sim_number}.rtt_est{4}{3};
 
-figure()
+figure(13)
 subplot(2,1,1)
 plot(ttf_c1_time, ttf_c1_data)
+title('Ttf rtt estimation for c1. Counter info below')
 subplot(2,1,2)
 plot(ttf_c1_time, ttf_c1_counter)
 
-figure()
+figure(14)
 subplot(2,1,1)
 plot(ttf_c2_time, ttf_c2_data)
+title('Ttf rtt estimation for c2. Counter info below')
 subplot(2,1,2)
 plot(ttf_c2_time, ttf_c2_counter)
 
