@@ -8,7 +8,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '30-Nov-2018_22-34-17';
+datasetStr = '03-Dec-2018_20-12-01';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -22,10 +22,10 @@ datasetFiles = dir('.');
 n_sim = size(datasetFiles,1) - 2; % 2 "files" would be "." and ".." in dir's output
 
 % Other parameters
-num_alg = 1; % DropTail, RED and TTF
+num_alg = 3; % DropTail, RED and TTF
 %num_rtt = 2; % 0.15 and 0.2 for connection 2
 %num_bg = 2;  % constant with values: 0.00002 and 0.00001168
-n_seeds = 9;
+n_seeds = 5;
  
 
 %% Iterate over simulations and read structures
@@ -140,13 +140,13 @@ ylabel('Goodput[bits]')
 
 figure()
 plot(dt_th(3,2), dt_th(3,1), 'ro', 'MarkerSize', 10)
-xlim([10^5 10^7])
-ylim([10^5 10^7])
+xlim([10^5 2*10^7])
+ylim([10^5 2*10^7])
 hold on
 plot(red_th(3,2), red_th(3,1), 'ko', 'MarkerSize', 10)
 title('Goodput per connection')
 plot(ttf_th(3,2), ttf_th(3,1), 'bo', 'MarkerSize', 10)
-plot([10^5 10^7], [10^5 10^7], 'm--')
+plot([10^5 2*10^7], [10^5 2*10^7], 'm--')
 legend('Droptail','RED', 'TTF')
 hold off
 
@@ -167,7 +167,7 @@ hold off
 % errorbar()
 
 % Plot cwnd (must be tested to achieve a meaningful figure)
-sim_number = 2;
+sim_number = 11;
 c1_cwnd = results_cell{sim_number}.cwnd{1};
 c2_cwnd = results_cell{sim_number}.cwnd{2};
 figure()
@@ -177,50 +177,50 @@ subplot(2,1,2)
 plot(c2_cwnd{2}, c2_cwnd{1})
 
 % Plot timeouts per connection vs simulation
-% sim_array = 1:15;
-% timeouts_array = horzcat(c1_timeouts, c2_timeouts);
-% figure()
-% bar(sim_array, timeouts_array)
-% title('Timeouts per connection vs simulation number')
-% xlabel('Simulation Number')
-% ylabel('Timeouts')
+sim_array = 1:15;
+timeouts_array = horzcat(c1_timeouts, c2_timeouts);
+figure()
+bar(sim_array, timeouts_array)
+title('Timeouts per connection vs simulation number')
+xlabel('Simulation Number')
+ylabel('Timeouts')
 
 %% Plot avg queue size vs bg traffic (RED_TTF)
 
-q_array = zeros(n_sim,1);
-qstd_array = zeros(n_sim,1);
-bg_array = zeros(n_sim,1);
-
-for l = 1:n_sim
-    q_array(l) = mean(results_cell{l}.qstats{1}{1});
-    qstd_array(l) = std(results_cell{l}.qstats{1}{1});
-    bg_char = char(results_cell{l}.bg_dist);
-    bg_cut = bg_char(11:end-1);
-    formatSpec = '%f';
-    pkt_iat_cell = textscan(bg_cut, formatSpec);
-    pkt_iat = pkt_iat_cell{1};
-    bg_array(l) = pkt_iat;
-end
-
-figure()
-plot(bg_array, q_array)
-title('Average queue vs pkt_iat');
-
-figure()
-errorbar(bg_array, q_array, qstd_array)
-title('Average queue vs pkt_iat');
-
-figure()
-subplot(2,1,1)
-plot(results_cell{9}.qstats{1}{4}, results_cell{9}.qstats{1}{1})
-subplot(2,1,2)
-plot(results_cell{9}.qstats{1}{4}, results_cell{9}.qstats{1}{2})
+% q_array = zeros(n_sim,1);
+% qstd_array = zeros(n_sim,1);
+% bg_array = zeros(n_sim,1);
+% 
+% for l = 1:n_sim
+%     q_array(l) = mean(results_cell{l}.qstats{1}{1});
+%     qstd_array(l) = std(results_cell{l}.qstats{1}{1});
+%     bg_char = char(results_cell{l}.bg_dist);
+%     bg_cut = bg_char(11:end-1);
+%     formatSpec = '%f';
+%     pkt_iat_cell = textscan(bg_cut, formatSpec);
+%     pkt_iat = pkt_iat_cell{1};
+%     bg_array(l) = pkt_iat;
+% end
+% 
+% figure()
+% plot(bg_array, q_array)
+% title('Average queue vs pkt_iat');
+% 
+% figure()
+% errorbar(bg_array, q_array, qstd_array)
+% title('Average queue vs pkt_iat');
 
 figure()
 subplot(2,1,1)
-plot(results_cell{1}.qstats{1}{4}, results_cell{1}.qstats{1}{1})
+plot(results_cell{7}.qstats{1}{4}, results_cell{7}.qstats{1}{1})
 subplot(2,1,2)
-plot(results_cell{1}.qstats{1}{4}, results_cell{1}.qstats{1}{2})
+plot(results_cell{7}.qstats{1}{4}, results_cell{7}.qstats{1}{2})
+
+figure()
+subplot(2,1,1)
+plot(results_cell{11}.qstats{1}{4}, results_cell{11}.qstats{1}{1})
+subplot(2,1,2)
+plot(results_cell{11}.qstats{1}{4}, results_cell{11}.qstats{1}{2})
 %% Return to previous folder
 
 cd ..
