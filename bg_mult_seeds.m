@@ -8,7 +8,7 @@ Inputs:
 - X pkt iat(interarrival time) values (lower values equal more pkts per second) 
 - N seeds
    
-Note: number of bg distributions and seeds must be manually injected into
+Note: number of bg distributions, seeds and alg number must be manually injected into
 code for now
 
 Outputs:
@@ -27,7 +27,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '04-Dec-2018_18-00-44';
+datasetStr = '05-Dec-2018_00-18-01';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -41,17 +41,19 @@ datasetFiles = dir('.');
 n_sim = size(datasetFiles,1) - 2; % 2 "files" would be "." and ".." in dir's output
 
 % Other parameters
-%num_alg = 1; % DropTail, RED and TTF
+num_alg = 3; % DropTail, RED and TTF
 %num_rtt = 2; % 0.15 and 0.2 for connection 2
-num_bg = 9;  
+num_bg = 9; % en teoria uno de estos 2 valores no es necesario, pues n_sim es igual a la multiplicacion de ambos
 n_seeds = 5;
  
+% Get extended str for filename
+extStr = [baseStr ' ' num2str(num_alg) ' '];
 
-%% Iterate over simulations and read structures
+%% Iterate over simulations and read structures (store in a cell)
 results_cell = cell(n_sim,1);
 for i = 1:n_sim
    % Get name from structure
-   fileName = datasetFiles(i+2).name;
+   fileName = [extStr num2str(i)];
    
    % Prepare variable name
    results_struct = struct([]); % creates empty structure
@@ -64,22 +66,24 @@ for i = 1:n_sim
    results_cell{i} = results_struct;
 end
 
-%% Identify algorithms data 
+%% Get relevant data for plots 
 
-th_array = zeros(3,2,n_sim); % 3 metrics: gp,th,eff_th + 2 connections + 9 simulations, each with a different bg distribution
-q_cell = cell(n_sim,1);
-alg_idx = 1;
+th_array = zeros(3,2,num_bg, n_seeds); % 3 metrics: gp,th,eff_th + 2 connections + 9 simulations, each with a different bg distribution
+q_cell = cell(num_bg, n_seeds);
+
 
 q_array = zeros(n_sim,1);
 qstd_array = zeros(n_sim,1);
 bg_array = zeros(n_sim,1);
 
-for j=1:n_sim         
-   th_array(1, :, alg_idx) = [results_cell{j}.throughput{1} results_cell{j}.throughput{2}];
-   th_array(2, :, alg_idx) = [results_cell{j}.goodput{1} results_cell{j}.goodput{2}];
-   th_array(3, :, alg_idx) = [results_cell{j}.th_eff{1} results_cell{j}.th_eff{2}];
-   q_cell{alg_idx} = results_cell{j}.qstats{1}{2}; % 2 is cur_qsize = instantaneous or smoothed queue size according to smoothing flag value
-   alg_idx = alg_idx + 1;   
+% Loop over pkt iat values
+for j=1:num_bg
+   for k=1:num_seeds-1
+       th_array(1, :, j, k) = [results_cell{j+k-1}.throughput{1} results_cell{j+k-1}.throughput{2}];
+       th_array(2, :, j, k) = [results_cell{j+k-1}.goodput{1} results_cell{j+k-1}.goodput{2}];
+       th_array(3, :, j, k) = [results_cell{j+k-1}.th_eff{1} results_cell{j+k-1}.th_eff{2}];
+       q_cell{j,k} = results_cell{j+k-1}.qstats{1}{2}; % 2 is cur_qsize = instantaneous or smoothed queue size according to smoothing flag value
+   end   
    
    % Get q data in different arrays for errorbar   (both from instantaneous measurements) 
    q_array(j) = mean(results_cell{j}.qstats{1}{1});

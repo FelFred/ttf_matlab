@@ -50,7 +50,8 @@ n_seeds = 5;
 results_cell = cell(n_sim,1);
 for i = 1:n_sim
    % Get name from structure
-   fileName = datasetFiles(i+2).name;
+   % fileName = datasetFiles(i+2).name;
+   
    
    % Prepare variable name
    results_struct = struct([]); % creates empty structure
