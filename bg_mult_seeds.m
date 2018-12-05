@@ -72,30 +72,44 @@ th_array = zeros(3,2,num_bg, n_seeds); % 3 metrics: gp,th,eff_th + 2 connections
 q_cell = cell(num_bg, n_seeds);
 
 
-q_array = zeros(n_sim,1);
-qstd_array = zeros(n_sim,1);
-bg_array = zeros(n_sim,1);
+q_array = zeros(num_bg, n_seeds);
+qstd_array = zeros(num_bg, n_seeds);
+bg_array = zeros(num_bg,1);
 
 % Loop over pkt iat values
 for j=1:num_bg
-   for k=1:num_seeds-1
-       th_array(1, :, j, k) = [results_cell{j+k-1}.throughput{1} results_cell{j+k-1}.throughput{2}];
-       th_array(2, :, j, k) = [results_cell{j+k-1}.goodput{1} results_cell{j+k-1}.goodput{2}];
-       th_array(3, :, j, k) = [results_cell{j+k-1}.th_eff{1} results_cell{j+k-1}.th_eff{2}];
-       q_cell{j,k} = results_cell{j+k-1}.qstats{1}{2}; % 2 is cur_qsize = instantaneous or smoothed queue size according to smoothing flag value
-   end   
-   
-   % Get q data in different arrays for errorbar   (both from instantaneous measurements) 
-   q_array(j) = mean(results_cell{j}.qstats{1}{1});
-   qstd_array(j) = std(results_cell{j}.qstats{1}{1});
-   
+   for k=1:n_seeds
+       current_cell = results_cell{1+((j-1)*n_seeds)+k-1};
+       th_array(1, :, j, k) = [current_cell.throughput{1} current_cell.throughput{2}];
+       th_array(2, :, j, k) = [current_cell.goodput{1} current_cell.goodput{2}];
+       th_array(3, :, j, k) = [current_cell.th_eff{1} current_cell.th_eff{2}];
+       q_cell{j,k} = current_cell.qstats{1}{2}; % 2 is cur_qsize = instantaneous or smoothed queue size according to smoothing flag value
+       
+       % Get q data in different arrays for errorbar   (both from instantaneous measurements) 
+       q_array(j,k) = mean(current_cell.qstats{1}{1});
+       qstd_array(j,k) = std(current_cell.qstats{1}{1});
+       
+       % Check timeout 
+       timeouts = size(current_cell.timeouts{1}{1}) - 1 + size(current_cell.timeouts{2}{1}) - 1;
+       
+       % Check if connection duration is wrong (less than 10 seconds)
+       wrong_dt = (current_cell.conn_dur{1} < 10) + (current_cell.conn_dur{2} < 10)
+        
+       % Change values to NaNs if problems were detected
+       if (timeouts + wrong_dt > 0) 
+            th_array(:,:,j,k) = NaN(3,2);
+            q_array(j,k) = NaN;
+            qstd_array(j,k) = NaN;
+       end
+       
+   end
    % Get bg dist array
-   bg_char = char(results_cell{j}.bg_dist);
+   bg_char = char(current_cell.bg_dist);
    bg_cut = bg_char(11:end-1);
    formatSpec = '%f';
    pkt_iat_cell = textscan(bg_cut, formatSpec);
-   pkt_iat = pkt_iat_cell{1};
-   bg_array(j) = pkt_iat;
+   pkt_iat = pkt_iat_cell{1}
+   bg_array(j) = pkt_iat
 end
 
 %% Get avg and std for throughput, goodput and effective_throughput
@@ -103,17 +117,20 @@ end
 th_array(th_array == Inf) = nan;
 
 % Get matrix average over bg traffic dimension (ignoring NaNs)
-th = mean(th_array, 3, 'omitnan');   
+th = squeeze(mean(th_array, 4, 'omitnan'));
+
     
 %% Get avg and std for (avg) queue size and queueing delay(the previous "amplified" by a factor)
-alg_q_array = zeros(n_sim,2);
-
-for k = 1:n_sim
-    alg_q_array(k,:) = [mean(q_cell{k}) std(q_cell{k})];
-end
-
-alg_qs = mean(alg_q_array,1);
-
+% alg_q_array = zeros(num_bg,n_seeds,2);
+% 
+% for k = 1:num_bg
+%     s_mean = squeeze(mean(q_cell{k,2}))
+%     alg_q_array(k,:) = [mean(q_cell{k}) std(q_cell{k})];
+% end
+% 
+% alg_qs = mean(alg_q_array,1);
+q_array = mean(q_array,2,'omitnan');
+qstd_array = mean(qstd_array,2,'omitnan');
 %% Get timeout data arrays
 c1_timeouts = zeros(n_sim,1);
 c2_timeouts = zeros(n_sim,1);
@@ -125,7 +142,14 @@ end
 %% Plot data
 
 % Plot "th1" vs "th2" (with "th" = th, gp or eff_th)
-gp_array = squeeze(th_array(3,:,:))';
+gp_array = squeeze(th(1,:,:))';
+figure(16)
+bar(bg_array, gp_array)
+title('Throughput(c1,c2) for different pkt iat')
+xlabel('Pkt interarrival time')
+ylabel('Throughput[bits]')
+
+gp_array = squeeze(th(3,:,:))';
 figure(1)
 bar(bg_array, gp_array)
 title('Goodput(c1,c2) for different pkt iat')
@@ -136,15 +160,16 @@ gp_ratio = gp_array(:,1)./gp_array(:,2)
 figure(15)
 xlabel('Simulation')
 ylabel('Goodput ratio (gp1/gp2)')
-bar(bg_array, gp_ratio)
+plot(bg_array, gp_ratio, '*')
 title('Fairness per simulation')
 hold on
-plot(bg_array, ones(length(bg_array),1), 'rx--')
+plot(bg_array, ones(length(bg_array),1), 'r--')
+ylim([0.8 1.3])
 
 figure(2)
 hold on
-x_plot = squeeze(th_array(3,2,:));
-y_plot = squeeze(th_array(3,1,:));
+x_plot = squeeze(th(3,2,:));
+y_plot = squeeze(th(3,1,:));
 plot(x_plot, y_plot, 'r-o', 'MarkerSize', 10)
 xlim([10^5 2*10^7])
 ylim([10^5 2*10^7])

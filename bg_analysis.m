@@ -31,7 +31,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '04-Dec-2018_18-00-44';
+datasetStr = '05-Dec-2018_17-47-41';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -136,10 +136,10 @@ gp_ratio = gp_array(:,1)./gp_array(:,2)
 figure(15)
 xlabel('Simulation')
 ylabel('Goodput ratio (gp1/gp2)')
-bar(bg_array, gp_ratio)
+plot(bg_array, gp_ratio, '*')
 title('Fairness per simulation')
 hold on
-plot(bg_array, ones(length(bg_array),1), 'rx--')
+plot(bg_array, ones(length(bg_array),1), 'r--')
 
 figure(2)
 hold on
