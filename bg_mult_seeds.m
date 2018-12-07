@@ -27,7 +27,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '05-Dec-2018_00-18-01';
+datasetStr = '07-Dec-2018_14-08-16';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -44,7 +44,7 @@ n_sim = size(datasetFiles,1) - 2; % 2 "files" would be "." and ".." in dir's out
 num_alg = 3; % DropTail, RED and TTF
 %num_rtt = 2; % 0.15 and 0.2 for connection 2
 num_bg = 9; % en teoria uno de estos 2 valores no es necesario, pues n_sim es igual a la multiplicacion de ambos
-n_seeds = 5;
+n_seeds = 1;
  
 % Get extended str for filename
 extStr = [baseStr ' ' num2str(num_alg) ' '];
@@ -160,11 +160,11 @@ gp_ratio = gp_array(:,1)./gp_array(:,2)
 figure(15)
 xlabel('Simulation')
 ylabel('Goodput ratio (gp1/gp2)')
-plot(bg_array, gp_ratio, '*')
+plot(bg_array, gp_ratio, '*-')
 title('Fairness per simulation')
 hold on
 plot(bg_array, ones(length(bg_array),1), 'r--')
-ylim([0.8 1.3])
+%ylim([0.8 1.3])
 
 figure(2)
 hold on

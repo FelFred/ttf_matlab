@@ -1,6 +1,6 @@
 function y = get_t1(q)
-    if (q <= 20)
-        y = q/20;
+    if (q <= 15)
+        y = q/15;
     else
         y = 1;
     end
