@@ -8,6 +8,7 @@ Inputs:
 - Y number of algorithms
 - X pkt iat(interarrival time) values (lower values equal more pkts per second) 
 - N seeds
+- Z numbers of RTT
    
 Note: number of bg distributions, seeds and alg number must be manually injected into
 code for now
@@ -30,7 +31,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '12-Dec-2018_11-27-13';
+datasetStr = '12-Dec-2018_15-04-52';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -47,17 +48,28 @@ n_sim = size(datasetFiles,1) - 2; % 2 "files" would be "." and ".." in dir's out
 num_alg = 4; % DropTail, RED and TTF
 %num_rtt = 2; % 0.15 and 0.2 for connection 2
 num_bg = 9; % en teoria uno de estos 2 valores no es necesario, pues n_sim es igual a la multiplicacion de ambos
-n_seeds = 3; 
+n_seeds = 3;
+num_rtt = 3;
 
 
 
 %% Iterate over simulations and read structures (store in a cell) + sort data
 results_cell = cell(n_sim,1);
-idx_data = zeros(n_sim, 2, num_alg); % 2 = idx y bg
-idx1 = 1; % indices para ir llenando muestras en arreglo
-idx2 = 1;
-idx3 = 1;
-idx4 = 1;
+idx_data1 = zeros(n_sim, 2, num_alg); % 2 = idx y bg
+idx1_1 = 1; % indices para ir llenando muestras en arreglo
+idx2_1 = 1;
+idx3_1 = 1;
+idx4_1 = 1;
+idx_data2 = zeros(n_sim, 2, num_alg); % 2 = idx y bg
+idx1_2 = 1; % indices para ir llenando muestras en arreglo
+idx2_2 = 1;
+idx3_2 = 1;
+idx4_2 = 1;
+idx_data3 = zeros(n_sim, 2, num_alg); % 2 = idx y bg
+idx1_3 = 1; % indices para ir llenando muestras en arreglo
+idx2_3 = 1;
+idx3_3 = 1;
+idx4_3 = 1;
 for i = 1:n_sim
    % Get name from structure
    fileName = datasetFiles(i+2).name;
@@ -87,19 +99,55 @@ for i = 1:n_sim
     
    if (strcmp(alg,'RED'))
       if (sally_flag)
-        idx_data(idx1,:, 1) = [i, pkt_iat];
-        idx1 = idx1 + 1;
+          switch (current_cell.rtts{2})
+              case 0.1
+                  idx_data1(idx1_1,:, 1) = [i, pkt_iat];
+                  idx1_1 = idx1_1 + 1;
+              case 0.15
+                  idx_data2(idx1_2,:, 1) = [i, pkt_iat];
+                  idx1_2 = idx1_2 + 1;
+              case 0.2
+                  idx_data3(idx1_3,:, 1) = [i, pkt_iat];
+                  idx1_3 = idx1_3 + 1;
+          end        
       else
-        idx_data(idx2,:, 2) = [i, pkt_iat];
-        idx2 = idx2 + 1;
+          switch (current_cell.rtts{2})
+              case 0.1
+                  idx_data1(idx2_1,:, 2) = [i, pkt_iat];
+                  idx2_1 = idx2_1 + 1;
+              case 0.15
+                  idx_data2(idx2_2,:, 2) = [i, pkt_iat];
+                  idx2_2 = idx2_2 + 1;
+              case 0.2
+                  idx_data3(idx2_3,:, 2) = [i, pkt_iat];
+                  idx2_3 = idx2_3 + 1;
+          end
       end
    elseif (strcmp(alg,'TTF'))       
       if (sally_flag)
-        idx_data(idx3,:, 3) = [i, pkt_iat];
-        idx3 = idx3 + 1;
+        switch (current_cell.rtts{2})
+            case 0.1
+                idx_data1(idx3_1,:, 3) = [i, pkt_iat];
+                idx3_1 = idx3_1 + 1;
+            case 0.15
+                idx_data2(idx3_2,:, 3) = [i, pkt_iat];
+                idx3_2 = idx3_2 + 1;
+            case 0.2
+                idx_data3(idx3_3,:, 3) = [i, pkt_iat];
+                idx3_3 = idx3_3 + 1;
+        end
       else
-        idx_data(idx4,:, 4) = [i, pkt_iat]; 
-        idx4 = idx4 + 1;
+        switch (current_cell.rtts{2})
+              case 0.1
+                  idx_data1(idx4_1,:,4) = [i, pkt_iat];
+                  idx4_1 = idx4_1 + 1;
+              case 0.15
+                  idx_data2(idx4_2,:, 4) = [i, pkt_iat];
+                  idx4_2 = idx4_2 + 1;
+              case 0.2
+                  idx_data3(idx4_3,:, 4) = [i, pkt_iat];
+                  idx4_3 = idx4_3 + 1;
+        end
       end
    end 
    
@@ -113,7 +161,12 @@ cd ..
 addpath('./funciones/');
 
 
-idx_cell = sortby_pkt_iat(idx_data, idx1, idx2, idx3, idx4);
+idx_cell_1 = sortby_pkt_iat(idx_data1, idx1_1, idx2_1, idx3_1, idx4_1);
+idx_cell_2 = sortby_pkt_iat(idx_data2, idx1_1, idx2_2, idx3_2, idx4_2);
+idx_cell_3 = sortby_pkt_iat(idx_data3, idx1_3, idx2_3, idx3_3, idx4_3);
+
+% choose idx_cell of interest
+idx_cell = idx_cell_3;
 
 
 
@@ -200,14 +253,14 @@ end
 
 % Plot "th1" vs "th2" (with "th" = th, gp or eff_th)
 specified_alg = 3;
-gp_array = squeeze(th(4,:,:,:));
+tp_array = squeeze(th(4,:,:,:));
 figure(16)
 bar(bg_array, gp_array(:,:,2)')
 title('Throughput(c1,c2) for different pkt iat')
 xlabel('Pkt interarrival time')
 ylabel('Throughput[bits]')
 
-tp_array = squeeze(th(3,:,:,:));
+gp_array = squeeze(th(3,:,:,:));
 figure(1)
 bar(bg_array, tp_array(:,:,specified_alg)')
 title('Goodput(c1,c2) for different pkt iat')
@@ -252,32 +305,33 @@ hold off
 q_array = squeeze(q_array);
 qstd_array = squeeze(qstd_array);
 figure(5)
-errorbar(bg_array, q_array(:,1), qstd_array(:,1), 'bx')
+errorbar(bg_array, q_array(:,1), qstd_array(:,1))
 title('Average queue vs pkt_iat');
 hold on
-errorbar(bg_array, q_array(:,2), qstd_array(:,2),'kx')
-errorbar(bg_array, q_array(:,3), qstd_array(:,3),'mo')
-errorbar(bg_array, q_array(:,4), qstd_array(:,4),'ro')
+errorbar(bg_array, q_array(:,2), qstd_array(:,2))
+errorbar(bg_array, q_array(:,3), qstd_array(:,3))
+errorbar(bg_array, q_array(:,4), qstd_array(:,4))
 
 %% Save results in .mat
-f1 = 'th';
-f2 = 'bg';
-f3 = 'q_mean';
-f4 = 'q_std';
-th_cell = {{th}};
-bg_cell = {{bg_array}};
-qm_cell = {{q_array}};
-qstd_cell = {{qstd_array}};
-
-results = struct(f1, th_cell, f2, bg_cell, f3, qm_cell, f4, qstd_cell);
-
-date_time = datetime('now');
-DateString = datestr(date_time);
-newStr = strrep(DateString,' ','_');
-newStr = strrep(newStr,':','-');
-algStr = num2str(4); % ocupar este numero para diferenciar resultados, debe ser el mismo que el choice (1: rtt2 = 0.1, 2: rtt2 = 0.15, 3: rtt2 = 0.2 , 4 (en otro archivo): rtt2 = 0.15 y rtt1 = 0.1)
-str_2 = strcat(newStr, algStr, '.mat');
-save(str_2, 'results')
+% f1 = 'th';
+% f2 = 'bg';
+% f3 = 'q_mean';
+% f4 = 'q_std';
+% th_cell = {{th}};
+% bg_cell = {{bg_array}};
+% qm_cell = {{q_array}};
+% qstd_cell = {{qstd_array}};
+% 
+% results = struct(f1, th_cell, f2, bg_cell, f3, qm_cell, f4, qstd_cell);
+% 
+% date_time = datetime('now');
+% DateString = datestr(date_time);
+% newStr = strrep(DateString,' ','_');
+% newStr = strrep(newStr,':','-');
+% algStr = num2str(3); % ocupar este numero para diferenciar resultados, debe ser el mismo que el choice (1: rtt2 = 0.1, 2: rtt2 = 0.15, 3: rtt2 = 0.2 , 4 (en otro archivo): rtt2 = 0.15 y rtt1 = 0.1)
+% str_2 = strcat(newStr, algStr, '.mat');
+% save(str_2, 'results')
+% results
 
 %% Return to previous folder
 
