@@ -130,9 +130,13 @@ for i = 1:n_sim
                 line_data = textscan(tline,formatSpec);
                 red_params = line_data; % smoothing, rec_red, min_th, max_p, gentle_flag               
             case 5
+                formatSpec = '%f %f %f %f';
+                line_data = textscan(tline,formatSpec);
+                red_params2 = line_data;
+            case 6                
                 formatSpec = '%f';                
                 line_data = textscan(tline,formatSpec);
-                p_intr = line_data{1};               
+                p_intr = line_data{1};
             otherwise
                 %disp('no use for this line')
         end
@@ -169,8 +173,8 @@ for i = 1:n_sim
     %% Throughput, goodput and eff throughput
     
     % Goodput per connection
-    goodput_simulado_c1 = 8*f_size/dt_c1; % should be in bytes without x8 factor
-    goodput_simulado_c2 = 8*f_size/dt_c2; % should be in bytes without x8 factor
+    goodput_simulado_c1 = f_size/dt_c1; % should be in bytes without x8 factor
+    goodput_simulado_c2 = f_size/dt_c2; % should be in bytes without x8 factor
 
     % Throughout per connection
     avg_cwnd_c1 = mean(C_0{1});
@@ -182,6 +186,7 @@ for i = 1:n_sim
     overhead_factor = (1500+8)/1460;
     eff_th_c1 = goodput_simulado_c1*overhead_factor;
     eff_th_c2 = goodput_simulado_c2*overhead_factor;    
+    
     
     %% Loss data
     lines = loss_split{i+1}; 
@@ -198,6 +203,10 @@ for i = 1:n_sim
     total_c2 = total{1}(2);
     p1 = loss_c1/total_c1;
     p2 = loss_c2/total_c2;
+    
+    % Throughput 2
+    th_pkt_c1 = total_c1*12000 / dt_c1;
+    th_pkt_c2 = total_c2*12000 / dt_c2; 
     
     %% RTT estimation data
     lines = ro1_split{i+1}; 
@@ -218,7 +227,7 @@ for i = 1:n_sim
     
     %% Qstats data
     lines = qstats_split{i+1}; 
-    formatSpec = '%f %f %f %f';
+    formatSpec = '%f %f %f %f %f';
     Q = textscan(lines,formatSpec,'Delimiter','\n');
     
     %% Timeouts data
@@ -243,16 +252,15 @@ for i = 1:n_sim
     fsize_cell = {{f_size}}; %
     cwnd_cell = {{C, C_0}}; %
     dt_cell = {{dt_c1, dt_c2}}; %
-    th_cell = {{th_sim_c1, th_sim_c2}}; %
+    th_cell = {{th_sim_c1, th_sim_c2, th_pkt_c1, th_pkt_c2}}; %
     gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}}; %
     th_eff_cell = {{eff_th_c1, eff_th_c2}}; %
     loss_cell = {{p1, p2, p_intr}}; %
     est_cell = {{Ro1, Ro2, Rc1, Rc2}}; %
     q_cell = {{Q}}; %
     to_cell = {{T, T_0}}; %
-    redp_cell = {{red_params}}; %
-    lpdf_cell = {{P}};
-    
+    redp_cell = {{red_params, red_params2}}; %
+    lpdf_cell = {{P}};   
     %% Save structure 
     
     results_struct = struct(f1, alg_cell, f2, rtt_cell, f3, bg_cell, f4, fsize_cell, f5, cwnd_cell, f6, dt_cell, f7, th_cell, f8, gp_cell, f9, loss_cell, f10, q_cell, f11, est_cell, f12, th_eff_cell, f13, to_cell, f14, redp_cell, f15, lpdf_cell);
