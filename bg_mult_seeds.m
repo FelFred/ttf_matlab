@@ -4,7 +4,7 @@
  The whole set of data comes from 1 seed.
 
 Inputs:
-- 1 specific scenario
+- 1 specific scenario/algorithm
 - X pkt iat(interarrival time) values (lower values equal more pkts per second) 
 - N seeds
    
@@ -27,7 +27,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '07-Dec-2018_14-08-16';
+datasetStr = '21-Dec-2018_16-42-01';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -41,10 +41,10 @@ datasetFiles = dir('.');
 n_sim = size(datasetFiles,1) - 2; % 2 "files" would be "." and ".." in dir's output
 
 % Other parameters
-num_alg = 3; % DropTail, RED and TTF
+num_alg = 2; % DropTail, RED and TTF
 %num_rtt = 2; % 0.15 and 0.2 for connection 2
 num_bg = 9; % en teoria uno de estos 2 valores no es necesario, pues n_sim es igual a la multiplicacion de ambos
-n_seeds = 1;
+n_seeds = 5;
  
 % Get extended str for filename
 extStr = [baseStr ' ' num2str(num_alg) ' '];
@@ -80,7 +80,7 @@ bg_array = zeros(num_bg,1);
 for j=1:num_bg
    for k=1:n_seeds
        current_cell = results_cell{1+((j-1)*n_seeds)+k-1};
-       th_array(1, :, j, k) = [current_cell.throughput{1} current_cell.throughput{2}];
+       th_array(1, :, j, k) = [current_cell.throughput{3} current_cell.throughput{4}];
        th_array(2, :, j, k) = [current_cell.goodput{1} current_cell.goodput{2}];
        th_array(3, :, j, k) = [current_cell.th_eff{1} current_cell.th_eff{2}];
        q_cell{j,k} = current_cell.qstats{1}{2}; % 2 is cur_qsize = instantaneous or smoothed queue size according to smoothing flag value
@@ -171,8 +171,8 @@ hold on
 x_plot = squeeze(th(3,2,:));
 y_plot = squeeze(th(3,1,:));
 plot(x_plot, y_plot, 'r-o', 'MarkerSize', 10)
-xlim([10^5 2*10^7])
-ylim([10^5 2*10^7])
+xlim([10^5 0.6*10^7])
+ylim([10^5 0.6*10^7])
 title('Goodput per connection (fairness)')
 plot([10^5 2*10^7], [10^5 2*10^7], 'm--')
 legend('TTF')
