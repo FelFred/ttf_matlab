@@ -52,3 +52,9 @@ fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\loss_pdf.txt', '
 fclose(fileID);
 %Prints?
 disp('Files have been cleared/initialized')
+
+% Pkt destroyed at q files
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\destroyed.txt', 'w');
+fclose(fileID);
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\destroyed0.txt', 'w');
+fclose(fileID);
