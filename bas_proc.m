@@ -30,7 +30,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '27-Dec-2018_11-19-58';
+datasetStr = '27-Dec-2018_14-19-25';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -420,12 +420,14 @@ y_plot = squeeze(th(th_metric,1,:,2));
 plot(x_plot, y_plot, 'kx-', 'MarkerSize', 10)
 x_plot = squeeze(th(th_metric,2,:,3));
 y_plot = squeeze(th(th_metric,1,:,3));
-plot(x_plot, y_plot, 'bo--', 'MarkerSize', 10)
+plot(x_plot, y_plot, 'b.-', 'MarkerSize', 10)
 x_plot = squeeze(th(th_metric,2,:,4));
 y_plot = squeeze(th(th_metric,1,:,4));
-plot(x_plot, y_plot, 'ko--', 'MarkerSize', 10)
-xlim([10^5 0.3*10^7])
+plot(x_plot, y_plot, 'k.-', 'MarkerSize', 10)
+xlim([10^5 0.3*10^7]) % 10^5 0.3*10^7 para 50-150 y 75-125
 ylim([10^5 0.3*10^7])
+
+
 title('Goodput per connection (fairness plane)')
 legend('ARED','RED','ARED - TTF','RED - TTF')
 xlabel('Goodput c2')
@@ -481,7 +483,7 @@ legend('ARED','RED','ARED - TTF','RED - TTF')
 plot(bg_array, expected_array(:,1), 'r--')
 xlabel('Packet Interarrival Time [s]')
 ylabel('Loss ratio (p1/p2)')
-ylim([0 3])
+ylim([0 4])
 
 % Plot TTF effect on goodput (over ARED)
 ttf_effect_ared = zeros(4,num_bg);
@@ -489,8 +491,8 @@ ttf_effect_red = zeros(4,num_bg);
 target_ared = zeros(2,2,num_bg);
 target_red = zeros(2,2,num_bg);
 delta_bg = bg_array(2)-bg_array(1);
-rtt1 = 0.075;
-rtt2 = 0.125;
+rtt1 = results_cell{1}.rtts{1};
+rtt2 = results_cell{1}.rtts{2};
 
 for l = 1:4
     for j = 1:num_bg
