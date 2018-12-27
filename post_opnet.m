@@ -30,10 +30,11 @@ f12 = 'th_eff';
 f13 = 'timeouts';
 f14 = 'red_params';
 f15 = 'loss_pdf';
+f16 = 'dest';
 
 %% Determine number of simulations based on delimiters in params file
 
-params_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\params.txt');
+params_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\params.txt');
 delim = strcat('newdata', char(13), char(10)); % ASCII: 13 = \r , carriage return, 10 = \n , line feed
 n_sim = length(strfind(params_text,delim));
 
@@ -46,53 +47,59 @@ delim = 'newdata\r\n'; %not necessary to write CR and LF as char(ascii number)
 S_params = strsplit(params_text, delim);
 
 % File Size
-F1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\fsize_c1.txt');
-F2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\fsize_c2.txt');
+F1_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\fsize_c1.txt');
+F2_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\fsize_c2.txt');
 F1_split = strsplit(F1_text, delim);
 F2_split = strsplit(F1_text, delim);
 
 % Cwnd stats
-C1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\cwndstat_c1.txt');
-C2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\cwndstat_c2.txt');
+C1_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\cwndstat_c1.txt');
+C2_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\cwndstat_c2.txt');
 C1_split = strsplit(C1_text, delim);
 C2_split = strsplit(C2_text, delim);
 
 % Connections duration
-D1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\begin_end_c1.txt');
-D2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\begin_end_c2.txt');
+D1_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\begin_end_c1.txt');
+D2_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\begin_end_c2.txt');
 D1_split = strsplit(D1_text, delim);
 D2_split = strsplit(D2_text, delim);
 
 % Loss data and total pkts
-loss_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\loss_data.txt');
-total_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\total.txt');
+loss_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\loss_data.txt');
+total_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\total.txt');
 loss_split = strsplit(loss_text, delim);
 total_split = strsplit(total_text, delim);
 
 % Rtt estimation
-ro1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\oprtt_c1.txt');
-ro2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\oprtt_c2.txt');
+ro1_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\oprtt_c1.txt');
+ro2_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\oprtt_c2.txt');
 ro1_split = strsplit(ro1_text, delim);
 ro2_split = strsplit(ro2_text, delim);
 
-rc1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est0.txt');
-rc2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est.txt');
+rc1_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\est0.txt');
+rc2_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\est.txt');
 rc1_split = strsplit(rc1_text, delim);
 rc2_split = strsplit(rc2_text, delim);
 
 % Queue statistics
-qstats_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\qstats.txt');
+qstats_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\qstats.txt');
 qstats_split = strsplit(qstats_text, delim);
 
 % Timeouts
-to1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\timeouts_c1.txt');
-to2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\timeouts_c2.txt');
+to1_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\timeouts_c1.txt');
+to2_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\timeouts_c2.txt');
 to1_split = strsplit(to1_text, delim);
 to2_split = strsplit(to2_text, delim);
 
 % Loss pdf
-lpdf_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\loss_pdf.txt');
+lpdf_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\loss_pdf.txt');
 lpdf_split = strsplit(lpdf_text, delim);
+
+% Destroyed pkts
+des1_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\destroyed0.txt');
+des2_text = fileread('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\destroyed.txt');
+des1_split = strsplit(des1_text, delim);
+des2_split = strsplit(des2_text, delim);
 
 %% Loop over simulations
 
@@ -166,10 +173,11 @@ for i = 1:n_sim
     lines = D2_split{i+1};
     formatSpec = '%f';
     D = textscan(lines,formatSpec,'Delimiter','\n');
-    
-    dt_c1 = D_0{1}(end) - D_0{1}(end-1);
-    dt_c2 = D{1}(end) - D{1}(end-1);
-    
+%     
+%     dt_c1 = D_0{1}(end) - D_0{1}(end-1);
+%     dt_c2 = D{1}(end) - D{1}(end-1);
+    dt_c1 = C_0{2}(end) - 20;
+    dt_c2 = C{2}(end) - 20;
     %% Throughput, goodput and eff throughput
     
     % Goodput per connection
@@ -199,8 +207,9 @@ for i = 1:n_sim
     
     loss_c1 = loss{1}(1)+loss{1}(3)+loss{1}(5);
     loss_c2 = loss{1}(2)+loss{1}(4)+loss{1}(6);
-    total_c1 = total{1}(1);
-    total_c2 = total{1}(2);
+    total_c1 = total{1}(1) - loss_c1
+    total_c2 = total{1}(2) - loss_c2
+  
     p1 = loss_c1/total_c1;
     p2 = loss_c2/total_c2;
     
@@ -244,6 +253,16 @@ for i = 1:n_sim
     formatSpec = '%f %f';
     P = textscan(lines,formatSpec,'Delimiter','\n');    
     
+    %% Destroyed pkts data
+    lines = des1_split{i+1}; 
+    formatSpec = '%f %f %f';
+    des1 = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    lines = des2_split{i+1};
+    formatSpec = '%f %f %f';
+    des2 = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    
     
     %% Fill cells
     rtt_cell = {{rtt1, rtt2}}; %
@@ -261,9 +280,10 @@ for i = 1:n_sim
     to_cell = {{T, T_0}}; %
     redp_cell = {{red_params, red_params2}}; %
     lpdf_cell = {{P}};   
+    destroyed_cell = {{des1, des2}};
     %% Save structure 
     
-    results_struct = struct(f1, alg_cell, f2, rtt_cell, f3, bg_cell, f4, fsize_cell, f5, cwnd_cell, f6, dt_cell, f7, th_cell, f8, gp_cell, f9, loss_cell, f10, q_cell, f11, est_cell, f12, th_eff_cell, f13, to_cell, f14, redp_cell, f15, lpdf_cell);
+    results_struct = struct(f1, alg_cell, f2, rtt_cell, f3, bg_cell, f4, fsize_cell, f5, cwnd_cell, f6, dt_cell, f7, th_cell, f8, gp_cell, f9, loss_cell, f10, q_cell, f11, est_cell, f12, th_eff_cell, f13, to_cell, f14, redp_cell, f15, lpdf_cell, f16, destroyed_cell);
 %   date_time = datetime('now');
 %   DateString = datestr(date_time);
 %   newStr = strrep(DateString,' ','_');
@@ -282,7 +302,7 @@ end
 % overhead_factor = (1500+8)/1460;
 % 
 % % Read parameters file
-% fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\params.txt');
+% fileID = fopen('C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\params.txt');
 % cur_line = fgetl(fileID);
 % line_no = 1;
 % while ischar(cur_line)
