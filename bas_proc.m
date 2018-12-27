@@ -30,7 +30,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '27-Dec-2018_02-08-06';
+datasetStr = '27-Dec-2018_11-19-58';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -151,7 +151,7 @@ for a = 1:num_alg
            q_cell{j,k,a} = current_cell.qstats{1}{2}; % 2 is cur_qsize = instantaneous or smoothed queue size according to smoothing flag value
            
            if (j == 9)
-               current_idx
+               current_idx;
            end
 
           
