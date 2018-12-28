@@ -30,7 +30,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '27-Dec-2018_14-19-25';
+datasetStr = '27-Dec-2018_16-28-40';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -426,14 +426,31 @@ y_plot = squeeze(th(th_metric,1,:,4));
 plot(x_plot, y_plot, 'k.-', 'MarkerSize', 10)
 xlim([10^5 0.3*10^7]) % 10^5 0.3*10^7 para 50-150 y 75-125
 ylim([10^5 0.3*10^7])
-
-
 title('Goodput per connection (fairness plane)')
 legend('ARED','RED','ARED - TTF','RED - TTF')
 xlabel('Goodput c2')
 ylabel('Goodput c1')
 plot([10^5 2*10^7], [10^5 2*10^7], 'm--')
 hold off
+
+% Plot total goodput
+total_gp = zeros(num_bg, 4);
+for j = 1:num_bg
+    for a = 1:4
+        total_gp(j,a) = gp_array(1,j,a) + gp_array(2,j,a);
+    end
+end
+
+figure(30)
+plot(bg_array, total_gp(:,1), 'bx-')
+title('Total goodput')
+hold on
+plot(bg_array, total_gp(:,2), 'rx-')
+plot(bg_array, total_gp(:,3), 'bo--')
+plot(bg_array, total_gp(:,4), 'ro--')
+legend('ARED','RED','ARED - TTF','RED - TTF')
+xlabel('Packet Interarrival Time [s]')
+ylabel('Gp1 + Gp2')
 
 % Plot avg queue size vs bg traffic (RED_TTF)
 q_array = squeeze(q_array);
