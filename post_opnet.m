@@ -76,10 +76,15 @@ ro2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\oprtt_c2.tx
 ro1_split = strsplit(ro1_text, delim);
 ro2_split = strsplit(ro2_text, delim);
 
-rc1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est0.txt');
-rc2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est.txt');
-rc1_split = strsplit(rc1_text, delim);
-rc2_split = strsplit(rc2_text, delim);
+% rc1_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est0.txt');
+% rc2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est.txt');
+% rc1_split = strsplit(rc1_text, delim);
+% rc2_split = strsplit(rc2_text, delim);
+
+rc1_v2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est0_v2.txt');
+rc2_v2_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est_v2.txt');
+rc1_v2_split = strsplit(rc1_v2_text, delim);
+rc2_v2_split = strsplit(rc2_v2_text, delim);
 
 % Queue statistics
 qstats_text = fileread('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\qstats.txt');
@@ -226,13 +231,21 @@ for i = 1:n_sim
     formatSpec = '%f %f';
     Ro2 = textscan(lines,formatSpec,'Delimiter','\n');
     
-    lines = rc1_split{i+1};     
-    formatSpec = '%f %f %f';
-    Rc1 = textscan(lines,formatSpec,'Delimiter','\n');
+%     lines = rc1_split{i+1};     
+%     formatSpec = '%f %f %f';
+%     Rc1 = textscan(lines,formatSpec,'Delimiter','\n');
+%     
+%     lines = rc2_split{i+1};
+%     formatSpec = '%f %f %f';
+%     Rc2 = textscan(lines,formatSpec,'Delimiter','\n');
     
-    lines = rc2_split{i+1};
-    formatSpec = '%f %f %f';
-    Rc2 = textscan(lines,formatSpec,'Delimiter','\n');
+    lines = rc1_v2_split{i+1};     
+    formatSpec = '%f %f';
+    Rc1_v2 = textscan(lines,formatSpec,'Delimiter','\n');
+    
+    lines = rc2_v2_split{i+1};
+    formatSpec = '%f %f';
+    Rc2_v2 = textscan(lines,formatSpec,'Delimiter','\n');
     
     %% Qstats data
     lines = qstats_split{i+1}; 
@@ -250,7 +263,7 @@ for i = 1:n_sim
     
     %% Loss pdf data    
     lines = lpdf_split{i+1}; 
-    formatSpec = '%f %f';
+    formatSpec = '%f %f %f %f %f %f %f';
     P = textscan(lines,formatSpec,'Delimiter','\n');    
     
     %% Destroyed pkts data
@@ -260,9 +273,7 @@ for i = 1:n_sim
     
     lines = des2_split{i+1};
     formatSpec = '%f %f %f';
-    des2 = textscan(lines,formatSpec,'Delimiter','\n');
-    
-    
+    des2 = textscan(lines,formatSpec,'Delimiter','\n');    
     
     %% Fill cells
     rtt_cell = {{rtt1, rtt2}}; %
@@ -275,7 +286,7 @@ for i = 1:n_sim
     gp_cell = {{goodput_simulado_c1, goodput_simulado_c2}}; %
     th_eff_cell = {{eff_th_c1, eff_th_c2}}; %
     loss_cell = {{p1, p2, p_intr}}; %
-    est_cell = {{Ro1, Ro2, Rc1, Rc2}}; %
+    est_cell = {{Ro1, Ro2, Rc1_v2, Rc2_v2}}; %
     q_cell = {{Q}}; %
     to_cell = {{T, T_0}}; %
     redp_cell = {{red_params, red_params2}}; %

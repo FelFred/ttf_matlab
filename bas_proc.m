@@ -30,7 +30,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '27-Dec-2018_16-28-40';
+datasetStr = '18-Jan-2019_10-55-07';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -48,7 +48,7 @@ num_alg = 4; % DropTail, RED and TTF
 %num_rtt = 2; % 0.15 and 0.2 for connection 2
 num_bg = 9; % en teoria uno de estos 2 valores no es necesario, pues n_sim es igual a la multiplicacion de ambos
 n_seeds = 3; 
-bg_end = 700; % manual input of bg traffic end
+bg_end = 725; % manual input of bg traffic end
 
 
 
@@ -378,7 +378,7 @@ end
 
 % Plot "th1" vs "th2" (with "th" = th, gp or eff_th)
 specified_alg = 3;
-th_metric = 4;
+th_metric = 1;
 gp_array = squeeze(th(th_metric,:,:,:));
 figure(1)
 bar(bg_array, gp_array(:,:,1)')
@@ -424,12 +424,15 @@ plot(x_plot, y_plot, 'b.-', 'MarkerSize', 10)
 x_plot = squeeze(th(th_metric,2,:,4));
 y_plot = squeeze(th(th_metric,1,:,4));
 plot(x_plot, y_plot, 'k.-', 'MarkerSize', 10)
-xlim([10^5 0.3*10^7]) % 10^5 0.3*10^7 para 50-150 y 75-125
-ylim([10^5 0.3*10^7])
+max_array = [th(th_metric,2,num_bg,1) th(th_metric,1,num_bg,1) th(th_metric,2,num_bg,2) th(th_metric,1,num_bg,2) th(th_metric,2,num_bg,3) th(th_metric,1,num_bg,3) th(th_metric,2,num_bg,4) th(th_metric,1,num_bg,4)];
+limit = 1.25 * max(max_array);
+xlim([10^5 limit]) % 10^5 0.3*10^7 para 50-150 y 75-125
+ylim([10^5 limit])
 title('Goodput per connection (fairness plane)')
 legend('ARED','RED','ARED - TTF','RED - TTF')
 xlabel('Goodput c2')
 ylabel('Goodput c1')
+
 plot([10^5 2*10^7], [10^5 2*10^7], 'm--')
 hold off
 
@@ -500,7 +503,7 @@ legend('ARED','RED','ARED - TTF','RED - TTF')
 plot(bg_array, expected_array(:,1), 'r--')
 xlabel('Packet Interarrival Time [s]')
 ylabel('Loss ratio (p1/p2)')
-ylim([0 4])
+ylim([0 1.3*expected_array(1,1)])
 
 % Plot TTF effect on goodput (over ARED)
 ttf_effect_ared = zeros(4,num_bg);
@@ -639,6 +642,8 @@ str_2 = strcat(newStr, algStr, '.mat');
 % cd ..
 
 %% Additional stuff
+
+% Plot connection duration vs sim number
 c1_dt = zeros(n_sim,1);
 c2_dt = zeros(n_sim,1);
 c1_dt2 = zeros(n_sim,1); % using cwnd
@@ -664,3 +669,76 @@ title('Connection duration per simulation')
 legend('c1', 'c2')
 xlabel('Simulation Number')
 ylabel('Connection duration [s]')
+
+% Plot loss rate vs time and seq  number vs time for each connection
+desired_cell = 108;
+cc = results_cell{desired_cell};
+loss_data = cc.loss_pdf{1};
+c1_cnt = 0;
+c2_cnt = 0;
+
+for i = 1:length(loss_data{1})
+    if (loss_data{5}(i) == 1)
+        c1_cnt = c1_cnt + 1;
+    elseif (loss_data{5}(i) == 3)
+        c2_cnt = c2_cnt + 1;
+    end
+end
+
+c1_data = zeros(c1_cnt, 5);
+c2_data = zeros(c2_cnt, 5);
+c1_idx = 1;
+c2_idx = 1;
+
+for i = 1:length(loss_data{1})
+    if (loss_data{5}(i) == 1)
+        c1_data(c1_idx,:) = [loss_data{1}(i) loss_data{2}(i) loss_data{3}(i) loss_data{4}(i) loss_data{6}(i)];
+        c1_idx = c1_idx + 1;
+    elseif (loss_data{5}(i) == 3)
+        c2_data(c2_idx,:) = [loss_data{1}(i) loss_data{2}(i) loss_data{3}(i) loss_data{4}(i) loss_data{6}(i)];
+        c2_idx = c2_idx + 1;        
+    end
+end
+
+figure(40)
+subplot(2,1,1)
+plot(c1_data(:,4), c1_data(:,2))
+subplot(2,1,2)
+plot(c1_data(:,4), c1_data(:,3))
+disp(['loss mean of c1: ' num2str(mean(c1_data(:,2)))])
+
+figure(41)
+subplot(2,1,1)
+plot(c2_data(:,4), c2_data(:,2))
+subplot(2,1,2)
+plot(c2_data(:,4), c2_data(:,3))
+
+disp(['loss mean of c2: ' num2str(mean(c2_data(:,2)))])
+
+disp(['loss ratio: ' num2str(mean(c1_data(:,2))/mean(c2_data(:,2)))])
+cc.loss
+
+
+figure(42)
+subplot(2,1,1)
+histogram(c1_data(:,3), unique(c1_data(:,3)))
+subplot(2,1,2)
+histogram(c2_data(:,3), unique(c2_data(:,3)))
+
+figure(43)
+subplot(2,1,1)
+hist(c1_data(:,5), unique(c1_data(:,5)))
+subplot(2,1,2)
+hist(c2_data(:,5), unique(c2_data(:,5)))
+
+figure(43)
+subplot(2,1,1)
+plot(c1_data(:,4), c1_data(:,5))
+subplot(2,1,2)
+plot(c2_data(:,4), c2_data(:,5))
+
+
+
+
+
+
