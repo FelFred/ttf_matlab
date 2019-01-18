@@ -37,8 +37,17 @@ fclose(fileID);
 fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est.txt', 'w');
 fclose(fileID);
 
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est0_v2.txt', 'w');
+fclose(fileID);
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\est_v2.txt', 'w');
+fclose(fileID);
+
 % Queue stats file
 fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\qstats.txt', 'w');
+fclose(fileID);
+
+% Remaining debt file
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\remdebt.txt', 'w');
 fclose(fileID);
 
 % Timeouts per connection files
