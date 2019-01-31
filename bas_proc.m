@@ -30,7 +30,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '18-Jan-2019_10-55-07';
+datasetStr = '31-Jan-2019_15-20-26';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -48,11 +48,12 @@ num_alg = 4; % DropTail, RED and TTF
 %num_rtt = 2; % 0.15 and 0.2 for connection 2
 num_bg = 9; % en teoria uno de estos 2 valores no es necesario, pues n_sim es igual a la multiplicacion de ambos
 n_seeds = 3; 
-bg_end = 725; % manual input of bg traffic end
+bg_end = 1000; % manual input of bg traffic end
 
 
 
 %% Iterate over simulations and read structures (store in a cell) + sort data
+bgend_array = zeros(1,n_sim);
 results_cell = cell(n_sim,1);
 problematic = zeros(n_sim,1);
 wrong_dur = zeros(n_sim,1); 
@@ -87,6 +88,9 @@ for i = 1:n_sim
    alg = current_cell.alg{1};
    sally_cell = current_cell.red_params{2}(4);
    sally_flag = sally_cell{1};
+   
+   % Get bg_end time
+   bgend_array(i) = current_cell.bg{1}{1};
     
    if (strcmp(alg,'RED'))
       if (sally_flag)
@@ -133,6 +137,7 @@ expected_array = zeros(num_bg,n_seeds, num_alg);
 empiric_array = zeros(num_bg,n_seeds, num_alg);
 dt_array = zeros(2,num_bg, n_seeds, num_alg);
 dt_array2 = zeros(2,num_bg, n_seeds, num_alg);
+
 
 for a = 1:num_alg
     alg_array = idx_cell{a}{1};
@@ -378,7 +383,7 @@ end
 
 % Plot "th1" vs "th2" (with "th" = th, gp or eff_th)
 specified_alg = 3;
-th_metric = 1;
+th_metric = 4;
 gp_array = squeeze(th(th_metric,:,:,:));
 figure(1)
 bar(bg_array, gp_array(:,:,1)')
@@ -664,9 +669,10 @@ plot(1:n_sim, c1_dt2, 'b-')
 hold on
 % plot(1:n_sim, c2_dt, 'r')
 plot(1:n_sim, c2_dt2, 'r-')
-plot(1:n_sim, (bg_end-20)*ones(n_sim,1), 'k--')
+% plot(1:n_sim, (bg_end-20)*ones(n_sim,1), 'k--')
+plot(1:n_sim, bgend_array, 'k--')
 title('Connection duration per simulation')
-legend('c1', 'c2')
+legend('c1', 'c2', 'bg')
 xlabel('Simulation Number')
 ylabel('Connection duration [s]')
 
@@ -736,6 +742,14 @@ subplot(2,1,1)
 plot(c1_data(:,4), c1_data(:,5))
 subplot(2,1,2)
 plot(c2_data(:,4), c2_data(:,5))
+
+figure(44)
+
+subplot(2,1,1)
+plot(c1_data(:,4), c1_data(:,5))
+subplot(2,1,2)
+plot(c2_data(:,4), c2_data(:,5))
+
 
 
 
