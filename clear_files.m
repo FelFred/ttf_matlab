@@ -62,6 +62,10 @@ fclose(fileID);
 %Prints?
 disp('Files have been cleared/initialized')
 
+% bg end
+fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\bg_end.txt', 'w');
+fclose(fileID);
+
 % Pkt destroyed at q files
 fileID = fopen('C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\destroyed.txt', 'w');
 fclose(fileID);
