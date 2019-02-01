@@ -191,8 +191,8 @@ for i = 1:n_sim
 %     
 %     dt_c1 = D_0{1}(end) - D_0{1}(end-1);
 %     dt_c2 = D{1}(end) - D{1}(end-1);
-    dt_c1 = C_0{2}(end) - 200;
-    dt_c2 = C{2}(end) - 200;
+    dt_c1 = C_0{2}(end) - (f_size/8)/10^6;
+    dt_c2 = C{2}(end) - (f_size/8)/10^6;
     %% Throughput, goodput and eff throughput
     
     % Goodput per connection
