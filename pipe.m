@@ -13,14 +13,20 @@ P_0 = textscan(fileID,formatSpec,'Delimiter','\n');
 fclose(fileID);
 
 
-length = length(P{1});
-fprintf('Array length = %d\n', length)
+% length = length(P{1});
+% fprintf('Array length = %d\n', length)
+
+% figure()
+% subplot(2,1,1)
+% plot(P{3}, P{2})
+% subplot(2,1,2)
+% plot(P{3}, P{1})
 
 figure()
 subplot(2,1,1)
-plot(P{3}, P{2})
+plot(P_0{3}, P_0{2})
 subplot(2,1,2)
-plot(P{3}, P{1})
+plot(P_0{3}, P_0{1})
 
 % xlabel('Tiempo[s]')
 % ylabel('Paquetes[bytes]')
@@ -61,5 +67,5 @@ plot(P{3}, P{1})
 % title('cwnd y pipe vs tiempo, server 0')
 % hold on
 % plot(P_0{4}, P_0{2}, 'k')
-% 
-% 
+
+
