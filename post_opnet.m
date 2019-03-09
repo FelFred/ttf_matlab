@@ -10,6 +10,9 @@ user_path = 'C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\';
 % FF desktop: 'C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\'
 % FF note - 'C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\'
 
+% Respaldos note:
+% Respaldos desktop: 'C:\D\Sefe\Universidad\opnet'
+
 %% Create folder with current date and time
 date_time = datetime('now');
 DateString = datestr(date_time);
