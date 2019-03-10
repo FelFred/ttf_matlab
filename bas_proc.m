@@ -27,7 +27,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '09-Mar-2019_23-32-05';
+datasetStr = '10-Mar-2019_20-37-32';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -115,7 +115,6 @@ cd ..
 
 addpath('./funciones/');
 
-
 idx_cell = sortby_pkt_iat(idx_data, idx1, idx2, idx3, idx4);
 
 %% Get relevant data for plots 
@@ -131,6 +130,7 @@ expected_array = zeros(num_bg,n_seeds, num_alg);
 empiric_array = zeros(num_bg,n_seeds, num_alg);
 dt_array = zeros(2,num_bg, n_seeds, num_alg);
 dt_array2 = zeros(2,num_bg, n_seeds, num_alg);
+init_time = results_cell{1}.file_size{1}/8/fsize_conv_factor;
 
 
 for a = 1:num_alg
@@ -151,21 +151,19 @@ for a = 1:num_alg
            
            if (j == 9)
                current_idx;
-           end
-
-          
+           end          
            
            % Get data for loss ratio plot
            expected_array(j,k,a) = (current_cell.rtts{2}/current_cell.rtts{1})^2; 
            empiric_array(j,k,a) = current_cell.loss{1}/current_cell.loss{2};
            
            % Get data for connection duration
-           dt_array(1,j,k,a) = current_cell.conn_dur{1}; % using conn_dur values
-           dt_array(2,j,k,a) = current_cell.conn_dur{2};
+           dt_array(1,j,k,a) = current_cell.conn_dur{3}; % using conn_dur values
+           dt_array(2,j,k,a) = current_cell.conn_dur{4};
            
            % Force connection duration using last value of cwnd
-           dt_array2(1,j,k,a) = current_cell.cwnd{2}{2}(end)-20; % using cwnd data           
-           dt_array2(2,j,k,a) = current_cell.cwnd{1}{2}(end)-20;     
+           dt_array2(1,j,k,a) = current_cell.cwnd{2}{2}(end)-init_time; % using cwnd data           
+           dt_array2(2,j,k,a) = current_cell.cwnd{1}{2}(end)-init_time;     
            
            % Get chopped array of qstats in the interval where both
            % connections are alive
@@ -665,11 +663,10 @@ c1_dt2 = zeros(n_sim,1); % using cwnd
 c2_dt2 = zeros(n_sim,1);
 c1_diff = zeros(n_sim,1);
 c2_diff = zeros(n_sim,1);
-init_time = results_cell{1}.file_size{1}/8/fsize_conv_factor;
 
 for i = 1:n_sim
-    c1_dt(i) = results_cell{i}.conn_dur{1};
-    c2_dt(i) = results_cell{i}.conn_dur{2};    
+    c1_dt(i) = results_cell{i}.conn_dur{3};
+    c2_dt(i) = results_cell{i}.conn_dur{4};    
     
     c1_dt2(i) = results_cell{i}.cwnd{2}{2}(end) - init_time; 
     c2_dt2(i) = results_cell{i}.cwnd{1}{2}(end) - init_time;
