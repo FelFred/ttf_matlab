@@ -1,16 +1,15 @@
 %% Code description
 %{
- This code was developed to process the data of a set of X simulations, where X is the number of bg traffic distributions used.
- The whole set of data comes from 1 seed.
+ This code was developed to process the data of a set of Z simulations, where Z is the number of bg traffic distributions used times the number of
+ algorithms times the number of seeds used (Z = X * Y * N) 
 
 Inputs:
-- 1 specific scenario
+- 1 specific scenario (topology)
 - Y number of algorithms
 - X pkt iat(interarrival time) values (lower values equal more pkts per second) 
 - N seeds
    
-Note: number of bg distributions, seeds and alg number must be manually injected into
-code for now
+Note: number of bg distributions, seeds and alg number must be manually injected into code for now
 
 Outputs:
 - Fig 1:        Goodput (c1,c2) vs pkt_iat
@@ -24,8 +23,6 @@ Outputs:
 clear all
 close all
 clc
-
-%addpath('./funciones/');
 
 %% Parameters
 
@@ -45,10 +42,9 @@ n_sim = size(datasetFiles,1) - 2; % 2 "files" would be "." and ".." in dir's out
 
 % Other parameters
 num_alg = 4; % DropTail, RED and TTF
-%num_rtt = 2; % 0.15 and 0.2 for connection 2
 num_bg = 9; % en teoria uno de estos 2 valores no es necesario, pues n_sim es igual a la multiplicacion de ambos
 n_seeds = 3; 
-bg_end = 1000; % manual input of bg traffic end
+bg_end = 2000; % manual input of bg traffic end (is it necessary?)
 
 
 
