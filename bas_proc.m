@@ -45,8 +45,7 @@ num_alg = 4; % DropTail, RED and TTF
 num_bg = 9; % en teoria uno de estos 2 valores no es necesario, pues n_sim es igual a la multiplicacion de ambos
 n_seeds = 3; 
 bg_end = 2000; % manual input of bg traffic end (is it necessary?)
-
-
+fsize_conv_factor = 1000000;
 
 %% Iterate over simulations and read structures (store in a cell) + sort data
 bgend_array = zeros(1,n_sim);
@@ -117,8 +116,6 @@ addpath('./funciones/');
 
 
 idx_cell = sortby_pkt_iat(idx_data, idx1, idx2, idx3, idx4);
-
-
 
 %% Get relevant data for plots 
 
@@ -220,13 +217,13 @@ for a = 1:num_alg
        bg_array(j) = pkt_iat;
     end
 end
+
 %% Get avg and std for throughput, goodput and effective_throughput
 % Transform Inf to NaNs (Inf = connection failed)
 th_array(th_array == Inf) = nan;
 
 % Get matrix average over seeds dimension (ignoring NaNs)
 th = squeeze(mean(th_array, 4, 'omitnan'));
-
     
 %% Get avg and std for (avg) queue size and queueing delay(the previous "amplified" by a factor)
 % alg_q_array = zeros(num_bg,n_seeds,2);
@@ -373,7 +370,6 @@ for l = 1:n_sim
     c1_duploss(l) = n1_duploss;    
     c2_duploss(l) = n2_duploss;
 end
-
 
 %% Plot data
 
@@ -617,6 +613,7 @@ legend('RED c1','RED+TTF c1','RED c2','RED+TTF c2')
 %plot(bg_array, expected_array(:,1), 'r--')
 xlabel('Packet Interarrival Time [s]')
 ylabel('Connection duration [s]')
+
 %% Save results in .mat
 f1 = 'th';
 f2 = 'bg';
@@ -649,28 +646,48 @@ c1_dt = zeros(n_sim,1);
 c2_dt = zeros(n_sim,1);
 c1_dt2 = zeros(n_sim,1); % using cwnd
 c2_dt2 = zeros(n_sim,1);
+c1_diff = zeros(n_sim,1);
+c2_diff = zeros(n_sim,1);
+init_time = results_cell{1}.file_size{1}/8/fsize_conv_factor;
 
 for i = 1:n_sim
     c1_dt(i) = results_cell{i}.conn_dur{1};
     c2_dt(i) = results_cell{i}.conn_dur{2};    
     
-    c1_dt2(i) = results_cell{i}.cwnd{2}{2}(end) - 20;
-    c2_dt2(i) = results_cell{i}.cwnd{1}{2}(end) - 20;     
+    c1_dt2(i) = results_cell{i}.cwnd{2}{2}(end) - init_time; 
+    c2_dt2(i) = results_cell{i}.cwnd{1}{2}(end) - init_time;
+    
+    c1_diff(i) = c1_dt(i)-c1_dt2(i);
+    c2_diff(i) = c2_dt(i)-c2_dt2(i);    
+end
+
+if (sum(c1_diff)~=0)
+    disp('dt_c1 discrepancy')
+end
+
+if (sum(c2_diff)~=0)
+    disp('dt_c1 discrepancy')
 end
 
 figure(14)
-% plot(1:n_sim, c1_dt, 'b')
-
 plot(1:n_sim, c1_dt2, 'b-')
 hold on
-% plot(1:n_sim, c2_dt, 'r')
 plot(1:n_sim, c2_dt2, 'r-')
-% plot(1:n_sim, (bg_end-20)*ones(n_sim,1), 'k--')
 plot(1:n_sim, bgend_array, 'k--')
 title('Connection duration per simulation')
 legend('c1', 'c2', 'bg')
 xlabel('Simulation Number')
-ylabel('Connection duration [s]')
+ylabel('Connection duration v2[s]')
+
+% figure(45)                                                 % Only use this plot if one of the previous disp was noticed in output
+% plot(1:n_sim, c1_dt, 'b')
+% hold on
+% plot(1:n_sim, c2_dt, 'r')
+% plot(1:n_sim, bgend_array, 'k--')
+% title('Connection duration per simulation')
+% legend('c1', 'c2', 'bg')
+% xlabel('Simulation Number')
+% ylabel('Connection duration v1[s]')
 
 % Plot loss rate vs time and seq  number vs time for each connection
 desired_cell = 108;
