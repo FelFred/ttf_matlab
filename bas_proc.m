@@ -46,6 +46,7 @@ num_bg = 9; % en teoria uno de estos 2 valores no es necesario, pues n_sim es ig
 n_seeds = 3; 
 bg_end = 2000; % manual input of bg traffic end (is it necessary?)
 fsize_conv_factor = 1000000;
+fig_number = 1;
 
 %% Iterate over simulations and read structures (store in a cell) + sort data
 bgend_array = zeros(1,n_sim);
@@ -377,21 +378,24 @@ end
 specified_alg = 3;
 th_metric = 4;
 gp_array = squeeze(th(th_metric,:,:,:));
-figure(1)
+figure(fig_number)
+fig_number = fig_number + 1;
 bar(bg_array, gp_array(:,:,1)')
 title('Throughput(c1,c2) for different pkt iat')
 xlabel('Pkt interarrival time')
 ylabel('Throughput[bits]')
 
 tp_array = squeeze(th(4,:,:,:));
-figure(2)
+figure(fig_number)
+fig_number = fig_number + 1;
 bar(bg_array, tp_array(:,:,3)')
 title('Goodput(c1,c2) for different pkt iat')
 xlabel('Simulation')
 ylabel('Goodput[bits]')
 
 gp_ratio = squeeze(gp_array(1,:,:)./gp_array(2,:,:));
-figure(3)
+figure(fig_number)
+fig_number = fig_number + 1;
 xlabel('Simulation')
 ylabel('Goodput ratio (gp1/gp2)')
 plot(bg_array, gp_ratio(:,1), 'bx-')
@@ -407,7 +411,8 @@ ylabel('Goodput Ratio (Gp1/Gp2)')
 
 %ylim([0.8 1.3])
 
-figure(4)
+figure(fig_number)
+fig_number = fig_number + 1;
 x_plot = squeeze(th(th_metric,2,:,1));
 y_plot = squeeze(th(th_metric,1,:,1));
 plot(x_plot, y_plot, 'bx-', 'MarkerSize', 10)
@@ -441,7 +446,8 @@ for j = 1:num_bg
     end
 end
 
-figure(30)
+figure(fig_number)
+fig_number = fig_number + 1;
 plot(bg_array, total_gp(:,1), 'bx-')
 title('Total goodput')
 hold on
@@ -455,7 +461,8 @@ ylabel('Gp1 + Gp2')
 % Plot avg queue size vs bg traffic (RED_TTF)
 q_array = squeeze(q_array);
 qstd_array = squeeze(qstd_array);
-figure(5)
+figure(fig_number)
+fig_number = fig_number + 1;
 % errorbar(bg_array, q_array(:,1), qstd_array(:,1), 'bx')
 plot(bg_array, q_array(:,1), 'bx-')
 title('Average queue vs pkt interarrival time');
@@ -473,7 +480,8 @@ legend('ARED','RED','ARED - TTF','RED - TTF')
 % Plot avg queue size STD vs bg traffic (RED_TTF)
 q_array = squeeze(q_array);
 qstd_array = squeeze(qstd_array);
-figure(6)
+figure(fig_number)
+fig_number = fig_number + 1;
 % errorbar(bg_array, q_array(:,1), qstd_array(:,1), 'bx')
 plot(bg_array, qstd_array(:,1), 'bx-')
 title('Average Queue Standard Deviation vs pkt interarrival time');
@@ -489,7 +497,8 @@ ylabel('Avg Queue Size Standard Deviation [pkts]')
 legend('ARED','RED','ARED - TTF','RED - TTF')
 
 % Plot experimental loss_ratio vs expected 
-figure(7)
+figure(fig_number)
+fig_number = fig_number + 1;
 plot(bg_array, empiric_lr(:,1), 'b*-')
 title('Empiric loss ratio')
 hold on
@@ -541,7 +550,8 @@ ttf_effect_ared = ttf_effect_ared';
 ttf_effect_red = ttf_effect_red';
 
 % Plot goodput evolution after ttf (ARED)
-figure(8)
+figure(fig_number)
+fig_number = fig_number + 1;
 bar(bg_array, ttf_effect_ared)
 title('TTF effect on goodput')
 hold on
@@ -551,7 +561,8 @@ xlabel('Packet Interarrival Time [s]')
 ylabel('Goodput [bits/s]')
 
 % Plot goodput evolution after ttf (RED)
-figure(15)
+figure(fig_number)
+fig_number = fig_number + 1;
 bar(bg_array, ttf_effect_red)
 title('TTF effect on goodput')
 hold on
@@ -561,25 +572,29 @@ xlabel('Packet Interarrival Time [s]')
 ylabel('Goodput [bits/s]')
 
 % Plot timeouts per simulation 
-figure(9)
+figure(fig_number)
+fig_number = fig_number + 1;
 plot(1:n_sim, c1_timeouts)
 hold on
 plot(1:n_sim, c2_timeouts, 'r')
 
 % Plot 2x loss per simulation
-figure(10)
+figure(fig_number)
+fig_number = fig_number + 1;
 plot(1:n_sim, c1_duploss)
 hold on
 plot(1:n_sim, c2_duploss, 'r')
 
 % Plot 2x loss max distance per simulation
-figure(11)
+figure(fig_number)
+fig_number = fig_number + 1;
 plot(1:n_sim, c1_maxdist)
 hold on
 plot(1:n_sim, c2_maxdist, 'r')
 
 % Plot wrongdt per simulation
-figure(12)
+figure(fig_number)
+fig_number = fig_number + 1;
 plot(1:n_sim, wrong_dur)
 
 % Plot conn_dur evolution after TTF 
@@ -597,7 +612,8 @@ for j = 1:num_bg
     dt_aux_red(j,4) = dt_avg(2,j,4);
 end
 % ARED 
-figure(13)
+figure(fig_number)
+fig_number = fig_number + 1;
 bar(bg_array, dt_aux_ared);
 title('TTF effect on connection duration')
 legend('ARED c1','ARED+TTF c1','ARED c2','ARED+TTF c2')
@@ -606,7 +622,8 @@ xlabel('Packet Interarrival Time [s]')
 ylabel('Connection duration [s]')
 
 % RED
-figure(16)
+figure(fig_number)
+fig_number = fig_number + 1;
 bar(bg_array, dt_aux_red);
 title('TTF effect on connection duration')
 legend('RED c1','RED+TTF c1','RED c2','RED+TTF c2')
@@ -630,7 +647,7 @@ date_time = datetime('now');
 DateString = datestr(date_time);
 newStr = strrep(DateString,' ','_');
 newStr = strrep(newStr,':','-');
-algStr = num2str(4); % ocupar este numero para diferenciar resultados, debe ser el mismo que el choice (1: rtt2 = 0.1, 2: rtt2 = 0.15, 3: rtt2 = 0.2 , 4 (en otro archivo): rtt2 = 0.15 y rtt1 = 0.1)
+algStr = num2str(4); % ocupar este numero para diferenciar resultados, debe ser el mismo que el choice (1: rtt2 = 0.1, 2: rtt2 = 0.15, 3: rtt2 = 0.2 , 4 (en otro archivo): rtt2 = 0.15 y rtt1 = 0.1)                                                   
 str_2 = strcat(newStr, algStr, '.mat');
 % save(str_2, 'results')
 
@@ -639,9 +656,9 @@ str_2 = strcat(newStr, algStr, '.mat');
 % cd ..
 % cd ..
 
-%% Additional stuff
+%% Additional stuff: connection duration vs sim number (1), loss rate vs time and seq_num vs time for each connection (2)
 
-% Plot connection duration vs sim number
+% (1) -- Plot connection duration vs sim number
 c1_dt = zeros(n_sim,1);
 c2_dt = zeros(n_sim,1);
 c1_dt2 = zeros(n_sim,1); % using cwnd
@@ -669,7 +686,8 @@ if (sum(c2_diff)~=0)
     disp('dt_c1 discrepancy')
 end
 
-figure(14)
+figure(fig_number)
+fig_number = fig_number + 1;
 plot(1:n_sim, c1_dt2, 'b-')
 hold on
 plot(1:n_sim, c2_dt2, 'r-')
@@ -689,7 +707,9 @@ ylabel('Connection duration v2[s]')
 % xlabel('Simulation Number')
 % ylabel('Connection duration v1[s]')
 
-% Plot loss rate vs time and seq  number vs time for each connection
+% -------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+% (2) -- Plot loss rate vs time and seq number vs time for each connection
 desired_cell = 108;
 cc = results_cell{desired_cell};
 loss_data = cc.loss_pdf{1};
@@ -719,14 +739,16 @@ for i = 1:length(loss_data{1})
     end
 end
 
-figure(40)
+figure(fig_number)
+fig_number = fig_number + 1;
 subplot(2,1,1)
 plot(c1_data(:,4), c1_data(:,2))
 subplot(2,1,2)
 plot(c1_data(:,4), c1_data(:,3))
 disp(['loss mean of c1: ' num2str(mean(c1_data(:,2)))])
 
-figure(41)
+figure(fig_number)
+fig_number = fig_number + 1;
 subplot(2,1,1)
 plot(c2_data(:,4), c2_data(:,2))
 subplot(2,1,2)
@@ -738,30 +760,35 @@ disp(['loss ratio: ' num2str(mean(c1_data(:,2))/mean(c2_data(:,2)))])
 cc.loss
 
 
-figure(42)
+figure(fig_number)
+fig_number = fig_number + 1;
 subplot(2,1,1)
 histogram(c1_data(:,3), unique(c1_data(:,3)))
 subplot(2,1,2)
 histogram(c2_data(:,3), unique(c2_data(:,3)))
 
-figure(43)
+figure(fig_number)
+fig_number = fig_number + 1;
 subplot(2,1,1)
 hist(c1_data(:,5), unique(c1_data(:,5)))
 subplot(2,1,2)
 hist(c2_data(:,5), unique(c2_data(:,5)))
 
-figure(43)
+figure(fig_number)
+fig_number = fig_number + 1;
 subplot(2,1,1)
 plot(c1_data(:,4), c1_data(:,5))
 subplot(2,1,2)
 plot(c2_data(:,4), c2_data(:,5))
 
-figure(44)
-
+figure(fig_number)
+fig_number = fig_number + 1;
 subplot(2,1,1)
 plot(c1_data(:,4), c1_data(:,5))
 subplot(2,1,2)
 plot(c2_data(:,4), c2_data(:,5))
+
+
 
 
 
