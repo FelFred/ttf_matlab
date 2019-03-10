@@ -710,12 +710,14 @@ ylabel('Connection duration v2[s]')
 % -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 % (2) -- Plot loss rate vs time and seq number vs time for each connection
+% Note: Histograms aren't 100% accurate since loss_pdf isn't saving every pkt's data
 desired_cell = 108;
 cc = results_cell{desired_cell};
-loss_data = cc.loss_pdf{1};
+loss_data = cc.loss_pdf{1};         % cur_qsize, var_loss, cur_seq, op_sim_time(), port, outcome
 c1_cnt = 0;
 c2_cnt = 0;
 
+% Count number of elements required for the array of data per connection
 for i = 1:length(loss_data{1})
     if (loss_data{5}(i) == 1)
         c1_cnt = c1_cnt + 1;
@@ -729,9 +731,10 @@ c2_data = zeros(c2_cnt, 5);
 c1_idx = 1;
 c2_idx = 1;
 
+% Get the data for each array
 for i = 1:length(loss_data{1})
     if (loss_data{5}(i) == 1)
-        c1_data(c1_idx,:) = [loss_data{1}(i) loss_data{2}(i) loss_data{3}(i) loss_data{4}(i) loss_data{6}(i)];
+        c1_data(c1_idx,:) = [loss_data{1}(i) loss_data{2}(i) loss_data{3}(i) loss_data{4}(i) loss_data{6}(i)]; 
         c1_idx = c1_idx + 1;
     elseif (loss_data{5}(i) == 3)
         c2_data(c2_idx,:) = [loss_data{1}(i) loss_data{2}(i) loss_data{3}(i) loss_data{4}(i) loss_data{6}(i)];
@@ -743,50 +746,71 @@ figure(fig_number)
 fig_number = fig_number + 1;
 subplot(2,1,1)
 plot(c1_data(:,4), c1_data(:,2))
+title('Loss prob vs time c1')
+xlabel('Time[s]')
+ylabel('Loss probability')
 subplot(2,1,2)
 plot(c1_data(:,4), c1_data(:,3))
-disp(['loss mean of c1: ' num2str(mean(c1_data(:,2)))])
+title('Seq number vs time c1')
+xlabel('Seq number[bytes]')
+ylabel('Time[s]')
 
 figure(fig_number)
 fig_number = fig_number + 1;
 subplot(2,1,1)
 plot(c2_data(:,4), c2_data(:,2))
+title('Loss prob vs time c2')
+xlabel('Time[s]')
+ylabel('Loss probability')
 subplot(2,1,2)
 plot(c2_data(:,4), c2_data(:,3))
+title('Seq number vs time c2')
+xlabel('Time[s]')
+ylabel('Seq number[bytes]')
 
+disp(['loss mean of c1: ' num2str(mean(c1_data(:,2)))])
 disp(['loss mean of c2: ' num2str(mean(c2_data(:,2)))])
-
 disp(['loss ratio: ' num2str(mean(c1_data(:,2))/mean(c2_data(:,2)))])
-cc.loss
 
 
 figure(fig_number)
 fig_number = fig_number + 1;
 subplot(2,1,1)
 histogram(c1_data(:,3), unique(c1_data(:,3)))
+title('Seq number histogram c1')
+xlabel('Seq number value')
+ylabel('Ocurrences')
 subplot(2,1,2)
 histogram(c2_data(:,3), unique(c2_data(:,3)))
+title('Seq number histogram c2')
+xlabel('Seq number value')
+ylabel('Ocurrences')
 
 figure(fig_number)
 fig_number = fig_number + 1;
 subplot(2,1,1)
 hist(c1_data(:,5), unique(c1_data(:,5)))
+title('Outcome hist c1')
+xlabel('Outcome value')
+ylabel('Ocurrences')
 subplot(2,1,2)
 hist(c2_data(:,5), unique(c2_data(:,5)))
+title('Outcome hist c1')
+xlabel('Outcome value')
+ylabel('Ocurrences')
 
 figure(fig_number)
 fig_number = fig_number + 1;
 subplot(2,1,1)
 plot(c1_data(:,4), c1_data(:,5))
+title('Outcome vs time c2')
+xlabel('Time[s]')
+ylabel('Outcome')
 subplot(2,1,2)
 plot(c2_data(:,4), c2_data(:,5))
-
-figure(fig_number)
-fig_number = fig_number + 1;
-subplot(2,1,1)
-plot(c1_data(:,4), c1_data(:,5))
-subplot(2,1,2)
-plot(c2_data(:,4), c2_data(:,5))
+title('Outcome vs time c2')
+xlabel('Time[s]')
+ylabel('Outcome')
 
 
 

@@ -37,7 +37,7 @@ f11 = 'rtt_est';
 f12 = 'th_eff';
 f13 = 'timeouts';
 f14 = 'red_params';
-f15 = 'loss_pdf';
+f15 = 'loss_pdf';       % cur_qsize, var_loss, cur_seq, op_sim_time(), port, outcome
 f16 = 'dest';
 f17 = 'bg';
 
