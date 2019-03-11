@@ -148,20 +148,21 @@ for a = 1:num_alg
            current_idx = alg_array(alg_idx,1);
            current_cell = results_cell{current_idx};
            
-           % Get throughput-like metrics
+           % Get throughput-like metrics (calculated in post_opnet.m)
            th_array(1, :, j, k, a) = [current_cell.throughput{1} current_cell.throughput{2}];
            th_array(2, :, j, k, a) = [current_cell.goodput{1} current_cell.goodput{2}];
            th_array(3, :, j, k, a) = [current_cell.th_eff{1} current_cell.th_eff{2}];
            th_array(4, :, j, k, a) = [current_cell.throughput{3} current_cell.throughput{4}];
            
-           q_cell{j,k,a} = current_cell.qstats{1}{2};                               % 2 is cur_qsize = instantaneous or smoothed queue size according to smoothing flag value
+           q_cell{j,k,a} = current_cell.qstats{1}{2};                               % 2 is cur_qsize = instantaneous or smoothed queue size
+                                                                                    % according to smoothing flag value (always on lately)
            
            % Get data for loss ratio plot
            expected_array(j,k,a) = (current_cell.rtts{2}/current_cell.rtts{1})^2; 
            empiric_array(j,k,a) = current_cell.loss{1}/current_cell.loss{2};
            
            % Get data for connection duration
-           dt_array(1,j,k,a) = current_cell.conn_dur{3};                            % using conn_dur values
+           dt_array(1,j,k,a) = current_cell.conn_dur{3};                            % using conn_dur values v1 (from tcp connection states)
            dt_array(2,j,k,a) = current_cell.conn_dur{4};
            
            % Force connection duration using last value of cwnd
@@ -183,15 +184,15 @@ for a = 1:num_alg
            
 
            % Check timeout 
-%            timeouts = length(current_cell.timeouts{1}{1}) - 1 + length(current_cell.timeouts{2}{1}) - 1;
-           timeouts = 0;                                                                % ya que son pocos, las simulaciones con timeouts se tomarán en cuenta
+           timeouts = length(current_cell.timeouts{1}{1}) - 1 + length(current_cell.timeouts{2}{1}) - 1;
+%            timeouts = 0;                                                          % avoid ignoring simulations with timeouts
 
            % Check if connection duration is wrong (less than 10 seconds)
            wrong_dt = (current_cell.conn_dur{1} < 10) + (current_cell.conn_dur{2} < 10);
            if (wrong_dt > 0)
                 wrong_dur(current_idx) = wrong_dt;
            end
-           wrong_dt = 0;                                                                %ya que con segundo método se logra medir bien duracion de conexiones
+%           wrong_dt = 0;                                                           % avoid ignoring wrong duration
            
 
            % Change values to NaNs if problems were detected
@@ -205,8 +206,6 @@ for a = 1:num_alg
                 dt_array(1,j,k,a) = NaN;
                 dt_array(2,j,k,a) = NaN;
            end 
-           
-           
            
        end
        % Get bg dist array
