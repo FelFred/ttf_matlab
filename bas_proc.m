@@ -508,7 +508,8 @@ legend('ARED','RED','ARED - TTF','RED - TTF')
 plot(bg_array, expected_array(:,1), 'r--')
 xlabel('Packet Interarrival Time [s]')
 ylabel('Loss ratio (p1/p2)')
-ylim([0 1.3*expected_array(1,1)])
+%ylim([0 1.3*expected_array(1,1)])
+ylim([0 1.3*max([max(empiric_lr(:,1)), max(empiric_lr(:,2)), max(empiric_lr(:,3)), max(empiric_lr(:,4))])])
 
 % Plot TTF effect on goodput (over ARED)
 ttf_effect_ared = zeros(4,num_bg);
