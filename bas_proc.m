@@ -34,36 +34,36 @@ results_path = ['./resultados/' datasetStr '/'];
 cd(results_path)
 
 % Get filename base string (same as the dataset folder)
-baseStr = ['./' datasetStr]; % .mat filenames initiate with the same string as the folder's name
+baseStr = ['./' datasetStr];                                    % .mat filenames start with the same string as the folder's name
 
 % Get number of simulations of the dataset using dir command
 datasetFiles = dir('.');
-n_sim = size(datasetFiles,1) - 2; % 2 "files" would be "." and ".." in dir's output
+n_sim = size(datasetFiles,1) - 2;                               % 2 "files" would be "." and ".." in dir's output
 
 % Other parameters
-num_alg = 4; % DropTail, RED and TTF
-num_bg = 9; % en teoria uno de estos 2 valores no es necesario, pues n_sim es igual a la multiplicacion de ambos
+num_alg = 4;                                                    % RED, ARED (+TTF)
+num_bg = 9;                                                     % 9 pkt_iat values
 n_seeds = 3; 
-bg_end = 2000; % manual input of bg traffic end (is it necessary?)
+bg_end = 2000;                                                  % Manual input of bg traffic end (is it necessary?)
 fsize_conv_factor = 1000000;
-fig_number = 1;
+fig_number = 1;                                                 % Used for automatic numbering of figures
 
 %% Iterate over simulations and read structures (store in a cell) + sort data
-bgend_array = zeros(1,n_sim);
-results_cell = cell(n_sim,1);
-problematic = zeros(n_sim,1);
-wrong_dur = zeros(n_sim,1); 
-idx_data = zeros(n_sim, 2, num_alg); % 2 = idx y bg
-idx1 = 1; % indices para ir llenando muestras en arreglo
+bgend_array = zeros(1,n_sim);                                   % Stores the time at which bg traffic ended for each simulation
+results_cell = cell(n_sim,1);                                   % Cell which stores the structure associated with each simulation
+problematic = zeros(n_sim,1);                                   % Used to keep track of simulations that may be faulty
+wrong_dur = zeros(n_sim,1);                                     % Used to keep track of simulation where connection duration appears to be wrong
+idx_data = zeros(n_sim, 2, num_alg);                            % 2 = idx and bg
+idx1 = 1;                                                       % Indexes required to move through array (and fill it). 4 idx = 4 algorithms
 idx2 = 1;
 idx3 = 1;
 idx4 = 1;
 for i = 1:n_sim
    % Get name from structure
-   fileName = datasetFiles(i+2).name;
+   fileName = datasetFiles(i+2).name;                           % Skip first 2 (. and ..)
    
    % Prepare variable name
-   results_struct = struct([]); % creates empty structure
+   results_struct = struct([]);                                 % Creates empty structure
    results_str = 'results_struct';
       
    % Load structure into variable
