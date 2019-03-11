@@ -53,7 +53,7 @@ bgend_array = zeros(1,n_sim);                                   % Stores the tim
 results_cell = cell(n_sim,1);                                   % Cell which stores the structure associated with each simulation
 problematic = zeros(n_sim,1);                                   % Used to keep track of simulations that may be faulty
 wrong_dur = zeros(n_sim,1);                                     % Used to keep track of simulation where connection duration appears to be wrong
-idx_data = zeros(n_sim, 2, num_alg);                            % 2 = idx and bg
+idx_data = zeros(n_sim/num_alg, 2, num_alg);                    % Separates data in 4 sets (accesed by 3rd dimension), 2nd dimension: idx and bg
 idx1 = 1;                                                       % Indexes required to move through array (and fill it). 4 idx = 4 algorithms
 idx2 = 1;
 idx3 = 1;
@@ -83,7 +83,8 @@ for i = 1:n_sim
    % Get bg_end time and store in array
    bgend_array(i) = current_cell.bg{1}{1};
    
-   % Save current cell index and pkt_iat value in idx array according to identified algorithm. Idx for each alg: ared = 1, red = 2, ared_ttf = 3, red_ttf = 4
+   % Save current cell's "dataset index" and pkt_iat value in idx array according to identified algorithm. 
+   % Idx for each alg: ared = 1, red = 2, ared_ttf = 3, red_ttf = 4 (used in 2nd dimension of idx_data array)
    alg = current_cell.alg{1};
    sally_cell = current_cell.red_params{2}(4);
    sally_flag = sally_cell{1};      
@@ -104,8 +105,7 @@ for i = 1:n_sim
         idx_data(idx4,:, 4) = [i, pkt_iat]; 
         idx4 = idx4 + 1;
       end
-   end 
-   
+   end  
      
 end
 
@@ -115,6 +115,9 @@ cd ..
 
 addpath('./funciones/');
 
+% The following returns 4 cells, one for each algorithm. 
+% Each cells oontaints a 2 dimensional array with : [Dataset index, pkt_iat]
+% Those arrays are sorted in ascending order by 2nd dimension (pkt_iat values)
 idx_cell = sortby_pkt_iat(idx_data, idx1, idx2, idx3, idx4);
 
 %% Get relevant data for plots 
