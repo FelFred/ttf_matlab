@@ -48,7 +48,7 @@ bg_end = 2000;                                                  % Manual input o
 fsize_conv_factor = 1000000;
 fig_number = 1;                                                 % Used for automatic numbering of figures
 
-%% Iterate over simulations and read structures (store in a cell) + sort data
+%% Iterate over simulations and read structures (store in a cell) + sort data according to algorithm
 bgend_array = zeros(1,n_sim);                                   % Stores the time at which bg traffic ended for each simulation
 results_cell = cell(n_sim,1);                                   % Cell which stores the structure associated with each simulation
 problematic = zeros(n_sim,1);                                   % Used to keep track of simulations that may be faulty
@@ -69,25 +69,25 @@ for i = 1:n_sim
    % Load structure into variable
    load(fileName, results_str);
    
-   % Store in cell
+   % Store structure in cell
    results_cell{i} = results_struct;
    current_cell = results_cell{i};  
    
-   % Get bg dist array
+   % Get bg dist value from current_cell
    bg_char = char(current_cell.bg_dist);
    bg_cut = bg_char(11:end-1);
    formatSpec = '%f';
    pkt_iat_cell = textscan(bg_cut, formatSpec);
    pkt_iat = pkt_iat_cell{1};
    
-   % Get alg number (red = 0, red_ttf = 1, ared = 2, ared_ttf = 3)
+   % Get bg_end time and store in array
+   bgend_array(i) = current_cell.bg{1}{1};
+   
+   % Save current cell index and pkt_iat value in idx array according to identified algorithm. Idx for each alg: ared = 1, red = 2, ared_ttf = 3, red_ttf = 4
    alg = current_cell.alg{1};
    sally_cell = current_cell.red_params{2}(4);
-   sally_flag = sally_cell{1};
+   sally_flag = sally_cell{1};      
    
-   % Get bg_end time
-   bgend_array(i) = current_cell.bg{1}{1};
-    
    if (strcmp(alg,'RED'))
       if (sally_flag)
         idx_data(idx1,:, 1) = [i, pkt_iat];
