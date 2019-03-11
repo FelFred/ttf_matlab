@@ -122,19 +122,21 @@ idx_cell = sortby_pkt_iat(idx_data, idx1, idx2, idx3, idx4);
 
 %% Get relevant data for plots 
 
-th_array = zeros(4,2,num_bg, n_seeds, num_alg); % 4 metrics: gp,th,eff_th,th_pkt + 2 connections + 9 simulations, each with a different bg distribution + n_seeds + num_alg algorithms
+% Array for throughput-like metrics : gp,th,eff_th,th_pkt
+th_array = zeros(4,2,num_bg, n_seeds, num_alg);                                     % 4 metrics + 2 connections + bg + n_seeds + num_alg 
+
+% Queue related
 q_cell = cell(num_bg, n_seeds,num_alg);
-
-
 q_array = zeros(num_bg, n_seeds, num_alg);
 qstd_array = zeros(num_bg, n_seeds, num_alg);
+
+% Others
 bg_array = zeros(num_bg,1);
 expected_array = zeros(num_bg,n_seeds, num_alg);
 empiric_array = zeros(num_bg,n_seeds, num_alg);
 dt_array = zeros(2,num_bg, n_seeds, num_alg);
 dt_array2 = zeros(2,num_bg, n_seeds, num_alg);
 init_time = results_cell{1}.file_size{1}/8/fsize_conv_factor;
-
 
 for a = 1:num_alg
     alg_array = idx_cell{a}{1};
@@ -145,27 +147,25 @@ for a = 1:num_alg
            alg_idx = ((j-1)*n_seeds + k);
            current_idx = alg_array(alg_idx,1);
            current_cell = results_cell{current_idx};
+           
+           % Get throughput-like metrics
            th_array(1, :, j, k, a) = [current_cell.throughput{1} current_cell.throughput{2}];
            th_array(2, :, j, k, a) = [current_cell.goodput{1} current_cell.goodput{2}];
            th_array(3, :, j, k, a) = [current_cell.th_eff{1} current_cell.th_eff{2}];
            th_array(4, :, j, k, a) = [current_cell.throughput{3} current_cell.throughput{4}];
            
-           q_cell{j,k,a} = current_cell.qstats{1}{2}; % 2 is cur_qsize = instantaneous or smoothed queue size according to smoothing flag value
-           
-           if (j == 9)
-               current_idx;
-           end          
+           q_cell{j,k,a} = current_cell.qstats{1}{2};                               % 2 is cur_qsize = instantaneous or smoothed queue size according to smoothing flag value
            
            % Get data for loss ratio plot
            expected_array(j,k,a) = (current_cell.rtts{2}/current_cell.rtts{1})^2; 
            empiric_array(j,k,a) = current_cell.loss{1}/current_cell.loss{2};
            
            % Get data for connection duration
-           dt_array(1,j,k,a) = current_cell.conn_dur{3}; % using conn_dur values
+           dt_array(1,j,k,a) = current_cell.conn_dur{3};                            % using conn_dur values
            dt_array(2,j,k,a) = current_cell.conn_dur{4};
            
            % Force connection duration using last value of cwnd
-           dt_array2(1,j,k,a) = current_cell.cwnd{2}{2}(end)-init_time; % using cwnd data           
+           dt_array2(1,j,k,a) = current_cell.cwnd{2}{2}(end)-init_time;             % using cwnd data           
            dt_array2(2,j,k,a) = current_cell.cwnd{1}{2}(end)-init_time;     
            
            % Get chopped array of qstats in the interval where both
@@ -179,20 +179,19 @@ for a = 1:num_alg
            
            % Get q data in different arrays for errorbar   (both from instantaneous measurements) 
 %            q_array(j,k,a) = mean(current_cell.qstats{1}{1});
-%            qstd_array(j,k,a) = std(current_cell.qstats{1}{1});
-%            
+%            qstd_array(j,k,a) = std(current_cell.qstats{1}{1});           
            
 
            % Check timeout 
 %            timeouts = length(current_cell.timeouts{1}{1}) - 1 + length(current_cell.timeouts{2}{1}) - 1;
-           timeouts = 0; % ya que son pocos, las simulaciones con timeouts se tomarán en cuenta
+           timeouts = 0;                                                                % ya que son pocos, las simulaciones con timeouts se tomarán en cuenta
 
            % Check if connection duration is wrong (less than 10 seconds)
            wrong_dt = (current_cell.conn_dur{1} < 10) + (current_cell.conn_dur{2} < 10);
            if (wrong_dt > 0)
                 wrong_dur(current_idx) = wrong_dt;
            end
-           wrong_dt = 0; %ya que con segundo método se logra medir bien duracion de conexiones
+           wrong_dt = 0;                                                                %ya que con segundo método se logra medir bien duracion de conexiones
            
 
            % Change values to NaNs if problems were detected
