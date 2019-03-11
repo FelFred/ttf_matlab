@@ -629,31 +629,6 @@ legend('RED c1','RED+TTF c1','RED c2','RED+TTF c2')
 xlabel('Packet Interarrival Time [s]')
 ylabel('Connection duration [s]')
 
-%% Save results in .mat
-f1 = 'th';
-f2 = 'bg';
-f3 = 'q_mean';
-f4 = 'q_std';
-th_cell = {{th}};
-bg_cell = {{bg_array}};
-qm_cell = {{q_array}};
-qstd_cell = {{qstd_array}};
-
-results = struct(f1, th_cell, f2, bg_cell, f3, qm_cell, f4, qstd_cell);
-
-date_time = datetime('now');
-DateString = datestr(date_time);
-newStr = strrep(DateString,' ','_');
-newStr = strrep(newStr,':','-');
-algStr = num2str(4); % ocupar este numero para diferenciar resultados, debe ser el mismo que el choice (1: rtt2 = 0.1, 2: rtt2 = 0.15, 3: rtt2 = 0.2 , 4 (en otro archivo): rtt2 = 0.15 y rtt1 = 0.1)                                                   
-str_2 = strcat(newStr, algStr, '.mat');
-% save(str_2, 'results')
-
-%% Return to previous folder
-
-% cd ..
-% cd ..
-
 %% Additional stuff: connection duration vs sim number (1), loss rate vs time and seq_num vs time for each connection (2)
 
 % (1) -- Plot connection duration vs sim number
@@ -771,7 +746,6 @@ end
 % disp(['loss mean of c2: ' num2str(mean(c2_data(:,2)))])
 % disp(['loss ratio: ' num2str(mean(c1_data(:,2))/mean(c2_data(:,2)))])
 % 
-% 
 % figure(fig_number)
 % fig_number = fig_number + 1;
 % subplot(2,1,1)
@@ -810,6 +784,31 @@ end
 % title('Outcome vs time c2')
 % xlabel('Time[s]')
 % ylabel('Outcome')
+
+%% Save results in .mat
+f1 = 'th';
+f2 = 'bg';
+f3 = 'q_mean';
+f4 = 'q_std';
+th_cell = {{th}};
+bg_cell = {{bg_array}};
+qm_cell = {{q_array}};
+qstd_cell = {{qstd_array}};
+
+results = struct(f1, th_cell, f2, bg_cell, f3, qm_cell, f4, qstd_cell);
+
+date_time = datetime('now');
+DateString = datestr(date_time);
+newStr = strrep(DateString,' ','_');
+newStr = strrep(newStr,':','-');
+algStr = num2str(4); % ocupar este numero para diferenciar resultados, debe ser el mismo que el choice (1: rtt2 = 0.1, 2: rtt2 = 0.15, 3: rtt2 = 0.2 , 4 (en otro archivo): rtt2 = 0.15 y rtt1 = 0.1)                                                   
+str_2 = strcat(newStr, algStr, '.mat');
+% save(str_2, 'results')
+
+%% Return to previous folder
+
+% cd ..
+% cd ..
 
 
 
