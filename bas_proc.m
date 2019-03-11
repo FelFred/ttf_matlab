@@ -27,7 +27,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '10-Mar-2019_20-37-32';
+datasetStr = '11-Mar-2019_14-25-43';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -373,7 +373,7 @@ end
 
 %% Plot data
 
-% Plot "th1" vs "th2" (with "th" = th, gp or eff_th)
+% Plot "th1" vs "th2" for a specific algorithm and metric (with "th" = th, gp or eff_th)
 specified_alg = 3;
 th_metric = 4;
 gp_array = squeeze(th(th_metric,:,:,:));
@@ -574,27 +574,48 @@ ylabel('Goodput [bits/s]')
 figure(fig_number)
 fig_number = fig_number + 1;
 plot(1:n_sim, c1_timeouts)
+title('Timeouts vs time c1')
+xlabel('Time[s]')
+ylabel('Timeout occurrence')
 hold on
 plot(1:n_sim, c2_timeouts, 'r')
+title('Timeouts vs time c2')
+xlabel('Time[s]')
+ylabel('Timeout ocurrence')
 
 % Plot 2x loss per simulation
 figure(fig_number)
 fig_number = fig_number + 1;
 plot(1:n_sim, c1_duploss)
+title('Timeouts vs time c1')
+xlabel('Time[s]')
+ylabel('Duploss occurrence')
 hold on
 plot(1:n_sim, c2_duploss, 'r')
+title('Duploss vs time c2')
+xlabel('Time[s]')
+ylabel('Duploss occurrence')
 
 % Plot 2x loss max distance per simulation
 figure(fig_number)
 fig_number = fig_number + 1;
 plot(1:n_sim, c1_maxdist)
+title('Duploss maxdist vs time c1')
+xlabel('Time[s]')
+ylabel('Distance [pkts]')
 hold on
 plot(1:n_sim, c2_maxdist, 'r')
+title('Duploss maxdist vs time c1')
+xlabel('Time[s]')
+ylabel('Distance [pkts]')
 
 % Plot wrongdt per simulation
 figure(fig_number)
 fig_number = fig_number + 1;
 plot(1:n_sim, wrong_dur)
+title('Wrong duration vs time c1')
+xlabel('Simulation number')
+ylabel('Wrong duration occurrence')
 
 % Plot conn_dur evolution after TTF 
 dt_aux_ared = zeros(num_bg, 4);
