@@ -11,7 +11,7 @@ Inputs:
    
 Note: number of bg distributions, seeds and alg number must be manually injected into code for now
 
-Outputs:
+Outputs: (outdated)
 - Fig 1:        Goodput (c1,c2) vs pkt_iat
 - Fig 2:        Fairness graph (trajectory given by different pkt_iat values)
 - Fig 5:        Average queue size errorbar plot vs pkt_iat avrg'd over seeds
@@ -27,7 +27,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '11-Mar-2019_14-25-43';
+datasetStr = '10-Mar-2019_20-37-32';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -45,7 +45,7 @@ num_alg = 4;                                                    % RED, ARED (+TT
 num_bg = 9;                                                     % 9 pkt_iat values
 n_seeds = 3; 
 bg_end = 2000;                                                  % Manual input of bg traffic end (is it necessary?)
-fsize_conv_factor = 1000000;
+fsize_conv_factor = 1000000;                                    % Used to get initial time due to OPNET's bug
 fig_number = 1;                                                 % Used for automatic numbering of figures
 
 %% Iterate over simulations and read structures (store in a cell) + sort data according to algorithm
@@ -118,6 +118,10 @@ addpath('./funciones/');
 % The following returns 4 cells, one for each algorithm. 
 % Each cells oontaints a 2 dimensional array with : [Dataset index, pkt_iat]
 % Those arrays are sorted in ascending order by 2nd dimension (pkt_iat values)
+idx1
+idx2
+idx3
+idx4
 idx_cell = sortby_pkt_iat(idx_data, idx1, idx2, idx3, idx4);
 
 %% Get relevant data for plots 

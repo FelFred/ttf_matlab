@@ -4,6 +4,8 @@ function y = sortby_pkt_iat(idx_data, idx1, idx2, idx3, idx4)
     
     % Loop over algorithms
     for k = 1:4
+        idx_array       % 28 siempre
+        idx_array(k)-1  % 27 siempre
         alg_data = idx_data(1:idx_array(k)-1, :, k);        
         [sorted, I] = sort(alg_data,1);
         

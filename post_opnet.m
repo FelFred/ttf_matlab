@@ -6,7 +6,7 @@ clc
 tic
 
 %% Set path of opnet_res folder
-user_path = 'C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\'; 
+user_path = 'C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\'; 
 % FF desktop: 'C:\\D\\Sefe\\Universidad\\opnet\\opnet_res\\'
 % FF note - 'C:\\Users\\Felipe Fredes\\Documents\\opnet_res\\'
 
