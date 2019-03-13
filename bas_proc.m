@@ -127,24 +127,23 @@ idx_cell = sortby_pkt_iat(idx_data);
 th_array = zeros(4,2,num_bg, n_seeds, num_alg);                                     % 4 metrics + 2 connections + bg + n_seeds + num_alg 
 
 % Queue related
-q_cell = cell(num_bg, n_seeds,num_alg);
-q_array = zeros(num_bg, n_seeds, num_alg);
-qstd_array = zeros(num_bg, n_seeds, num_alg);
+q_cell = cell(num_bg, n_seeds,num_alg);                                             % will store 2nd array of qstats (cur_qsize)
+q_array = zeros(num_bg, n_seeds, num_alg);                                          % will store mean of 1st array over chooped interval 
+qstd_array = zeros(num_bg, n_seeds, num_alg);                                       % will store std of 1st array over chooped interval
 
 % Others
-bg_array = zeros(num_bg,1);
-expected_array = zeros(num_bg,n_seeds, num_alg);
-empiric_array = zeros(num_bg,n_seeds, num_alg);
-dt_array = zeros(2,num_bg, n_seeds, num_alg);
-dt_array2 = zeros(2,num_bg, n_seeds, num_alg);
-init_time = results_cell{1}.file_size{1}/8/fsize_conv_factor;
+bg_array = zeros(num_bg,1);                                                         % will store all pkt_iat values
+expected_array = zeros(num_bg,n_seeds, num_alg);                                    % will store loss ratio expected from rtts
+empiric_array = zeros(num_bg,n_seeds, num_alg);                                     % will store empiric loss ratio obtained                 
+dt_array = zeros(2,num_bg, n_seeds, num_alg);                                       % will store connection duration obtained from cwnd data
+dt_array2 = zeros(2,num_bg, n_seeds, num_alg);                                      % will store connection duration obtained from tcp connection states
+init_time = results_cell{1}.file_size{1}/8/fsize_conv_factor;                       % tx begin time (determined by file size)
 
 for a = 1:num_alg
     alg_array = idx_cell{a}{1};
     % Loop over pkt iat values
     for j=1:num_bg
-       for k=1:n_seeds
-          
+       for k=1:n_seeds          
            alg_idx = ((j-1)*n_seeds + k);
            current_idx = alg_array(alg_idx,1);
            current_cell = results_cell{current_idx};
@@ -155,8 +154,21 @@ for a = 1:num_alg
            th_array(3, :, j, k, a) = [current_cell.th_eff{1} current_cell.th_eff{2}];
            th_array(4, :, j, k, a) = [current_cell.throughput{3} current_cell.throughput{4}];
            
+           % Get queue related info           
            q_cell{j,k,a} = current_cell.qstats{1}{2};                               % 2 is cur_qsize = instantaneous or smoothed queue size
                                                                                     % according to smoothing flag value (always on lately)
+                                                                                    
+           % Get chopped array of qstats in the interval where both connections are alive
+           q_chopped = chop_interval(current_cell.qstats{1}{1}, current_cell.qstats{1}{4}, dt_array2(1,j,k,a), dt_array2(2,j,k,a));
+           qdata_chopped = q_chopped{1};
+           
+           % Get q data in different arrays for errorbar   (both from instantaneous measurements) 
+           q_array(j,k,a) = mean(qdata_chopped);
+           qstd_array(j,k,a) = std(qdata_chopped);
+                        
+           % Get q data in different arrays for errorbar   (both from instantaneous measurements) 
+%            q_array(j,k,a) = mean(current_cell.qstats{1}{1});
+%            qstd_array(j,k,a) = std(current_cell.qstats{1}{1});  
            
            % Get data for loss ratio plot
            expected_array(j,k,a) = (current_cell.rtts{2}/current_cell.rtts{1})^2; 
@@ -168,22 +180,8 @@ for a = 1:num_alg
            
            % Force connection duration using last value of cwnd
            dt_array2(1,j,k,a) = current_cell.cwnd{2}{2}(end)-init_time;             % using cwnd data           
-           dt_array2(2,j,k,a) = current_cell.cwnd{1}{2}(end)-init_time;     
+           dt_array2(2,j,k,a) = current_cell.cwnd{1}{2}(end)-init_time;    
            
-           % Get chopped array of qstats in the interval where both
-           % connections are alive
-           q_chopped = chop_interval(current_cell.qstats{1}{1}, current_cell.qstats{1}{4}, dt_array2(1,j,k,a), dt_array2(2,j,k,a));
-           qdata_chopped = q_chopped{1};
-           
-           % Get q data in different arrays for errorbar   (both from instantaneous measurements) 
-           q_array(j,k,a) = mean(qdata_chopped);
-           qstd_array(j,k,a) = std(qdata_chopped);
-           
-           % Get q data in different arrays for errorbar   (both from instantaneous measurements) 
-%            q_array(j,k,a) = mean(current_cell.qstats{1}{1});
-%            qstd_array(j,k,a) = std(current_cell.qstats{1}{1});           
-           
-
            % Check timeout 
            timeouts = length(current_cell.timeouts{1}{1}) - 1 + length(current_cell.timeouts{2}{1}) - 1;
 %            timeouts = 0;                                                          % avoid ignoring simulations with timeouts
@@ -193,8 +191,7 @@ for a = 1:num_alg
            if (wrong_dt > 0)
                 wrong_dur(current_idx) = wrong_dt;
            end
-%           wrong_dt = 0;                                                           % avoid ignoring wrong duration
-           
+%           wrong_dt = 0;                                                           % avoid ignoring wrong duration           
 
            % Change values to NaNs if problems were detected
            if (timeouts + wrong_dt > 0) 
@@ -206,8 +203,7 @@ for a = 1:num_alg
                 problematic(current_idx) = 1;
                 dt_array(1,j,k,a) = NaN;
                 dt_array(2,j,k,a) = NaN;
-           end 
-           
+           end            
        end
        % Get bg dist array
        bg_char = char(current_cell.bg_dist);
