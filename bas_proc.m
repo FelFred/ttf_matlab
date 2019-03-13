@@ -118,11 +118,8 @@ addpath('./funciones/');
 % The following returns 4 cells, one for each algorithm. 
 % Each cells oontaints a 2 dimensional array with : [Dataset index, pkt_iat]
 % Those arrays are sorted in ascending order by 2nd dimension (pkt_iat values)
-idx1
-idx2
-idx3
-idx4
-idx_cell = sortby_pkt_iat(idx_data, idx1, idx2, idx3, idx4);
+
+idx_cell = sortby_pkt_iat(idx_data);
 
 %% Get relevant data for plots 
 
