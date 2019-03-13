@@ -222,15 +222,7 @@ th_array(th_array == Inf) = nan;
 % Get matrix average over seeds dimension (ignoring NaNs)
 th = squeeze(mean(th_array, 4, 'omitnan'));
     
-%% Get avg and std for (avg) queue size and queueing delay(the previous "amplified" by a factor)
-% alg_q_array = zeros(num_bg,n_seeds,2);
-% 
-% for k = 1:num_bg
-%     s_mean = squeeze(mean(q_cell{k,2}))
-%     alg_q_array(k,:) = [mean(q_cell{k}) std(q_cell{k})];
-% end
-% 
-% alg_qs = mean(alg_q_array,1);
+%% Get avg and std for (avg) queue size and queueing delay (queue size * delay_per_packet)
 q_array = mean(q_array,2,'omitnan');
 qstd_array = mean(qstd_array,2,'omitnan');
 
