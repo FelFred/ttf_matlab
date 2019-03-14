@@ -124,7 +124,11 @@ idx_cell = sortby_pkt_iat(idx_data);
 %% Get relevant data for plots 
 
 % Array for throughput-like metrics : gp,th,eff_th,th_pkt
-th_array = zeros(4,2,num_bg, n_seeds, num_alg);                                     % 4 metrics + 2 connections + bg + n_seeds + num_alg 
+th_array = zeros(4,2,num_bg, n_seeds, num_alg);                                     % 4 metrics + 2 connections + bg + n_seeds + num_alg
+                                                                                    % gp = 
+                                                                                    % th =
+                                                                                    % eff_th = 
+                                                                                    % th_pkt = 
 
 % Queue related
 q_cell = cell(num_bg, n_seeds,num_alg);                                             % will store 2nd array of qstats (cur_qsize)
@@ -397,7 +401,6 @@ legend('ARED','RED','ARED - TTF','RED - TTF')
 plot(bg_array, ones(length(bg_array),1), 'r--')
 xlabel('Packet Interarrival Time [s]')
 ylabel('Goodput Ratio (Gp1/Gp2)')
-
 %ylim([0.8 1.3])
 
 figure(fig_number)
@@ -423,7 +426,6 @@ title('Goodput per connection (fairness plane)')
 legend('ARED','RED','ARED - TTF','RED - TTF')
 xlabel('Goodput c2')
 ylabel('Goodput c1')
-
 plot([10^5 2*10^7], [10^5 2*10^7], 'm--')
 hold off
 
