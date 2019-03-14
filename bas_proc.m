@@ -49,12 +49,12 @@ fsize_conv_factor = 1000000;                                    % Used to get in
 fig_number = 1;                                                 % Used for automatic numbering of figures
 
 %% Iterate over simulations and read structures (store in a cell) + sort data according to algorithm
-bgend_array = zeros(1,n_sim);                                   % Stores the time at which bg traffic ended for each simulation
-results_cell = cell(n_sim,1);                                   % Cell which stores the structure associated with each simulation
-problematic = zeros(n_sim,1);                                   % Used to keep track of simulations that may be faulty
-wrong_dur = zeros(n_sim,1);                                     % Used to keep track of simulation where connection duration appears to be wrong
-idx_data = zeros(n_sim/num_alg, 2, num_alg);                    % Separates data in 4 sets (accesed by 3rd dimension), 2nd dimension: idx and bg
-idx1 = 1;                                                       % Indexes required to move through array (and fill it). 4 idx = 4 algorithms
+bgend_array = zeros(1,n_sim);                                                       % Stores the time at which bg traffic ended for each simulation
+results_cell = cell(n_sim,1);                                                       % Cell which stores the structure associated with each simulation
+problematic = zeros(n_sim,1);                                                       % Used to keep track of simulations that may be faulty
+wrong_dur = zeros(n_sim,1);                                                         % Used to keep track of simulation where connection duration appears to be wrong
+idx_data = zeros(n_sim/num_alg, 2, num_alg);                                        % Separates data in 4 sets (accesed by 3rd dimension), 2nd dimension: idx and bg
+idx1 = 1;                                                                           % Indexes required to move through array (and fill it). 4 idx = 4 algorithms
 idx2 = 1;
 idx3 = 1;
 idx4 = 1;
@@ -128,8 +128,8 @@ th_array = zeros(4,2,num_bg, n_seeds, num_alg);                                 
 
 % Queue related
 q_cell = cell(num_bg, n_seeds,num_alg);                                             % will store 2nd array of qstats (cur_qsize)
-q_array = zeros(num_bg, n_seeds, num_alg);                                          % will store mean of 1st array over chooped interval 
-qstd_array = zeros(num_bg, n_seeds, num_alg);                                       % will store std of 1st array over chooped interval
+q_array = zeros(num_bg, n_seeds, num_alg);                                          % will store mean of 1st array over chooped interval (uses inst values) 
+qstd_array = zeros(num_bg, n_seeds, num_alg);                                       % will store std of 1st array over chooped interval  (uses inst values)
 
 % Others
 bg_array = zeros(num_bg,1);                                                         % will store all pkt_iat values
@@ -243,34 +243,37 @@ for l = 1:n_sim
     c2_timeouts(l) = length(results_cell{l}.timeouts{2}{1}) - 1;
 end
 
-%% Get duploss per simulation
-c1_duploss = zeros(n_sim,1);
+%% Get duploss (lost retransmission) per simulation and maximum distance (in pkts) between both losses
+c1_duploss = zeros(n_sim,1);                                                             
 c2_duploss = zeros(n_sim,1);
-c1_maxdist = zeros(n_sim,1);
-c2_maxdist = zeros(n_sim,1);
+c1_maxdist = zeros(n_sim,1);                                                        
+c2_maxdist = zeros(n_sim,1);                                                        
 
 for l = 1:n_sim
     cc = results_cell{l};
-    c1_lossdata = cc.dest{1}{1}; 
-    c2_lossdata = cc.dest{2}{1};
+    c1_lossdata = cc.dest{1}{1};                                                    % Holds record of sequence numbers of pkts dropped for connection 1 
+    c2_lossdata = cc.dest{2}{1};                                                    % Holds record of sequence numbers of pkts dropped for connection 2
     
-    N_c1 = histc(c1_lossdata, unique(c1_lossdata));
-    N_c2 = histc(c2_lossdata, unique(c2_lossdata));
+    N_c1 = histc(c1_lossdata, unique(c1_lossdata));                                 % Number of losses per seq_number for connection 1
+    N_c2 = histc(c2_lossdata, unique(c2_lossdata));                                 % Number of losses per seq_number for connection 2
     
-    N1 = histc(N_c1, unique(N_c1));
+    N1 = histc(N_c1, unique(N_c1));                                                 % Number of ocurrence per value in previous array
     N2 = histc(N_c2, unique(N_c2));
     
+    % Determine if lost retransmission is detected and display in console
     if( (max(N_c1) > 2) || (max(N_c2) > 2))
         disp('More than 2x loss!')
     end
     
+    % Get number of duploss for connection 1
     sn1 = size(N1);
     if (sn1(1)>1)
         n1_duploss = N1(2);
     else
         n1_duploss = 0;
     end   
-    
+   
+    % Get number of duploss for connection 2
     sn2 = size(N2);
     if (sn2(1)>1)
         n2_duploss = N2(2);
@@ -278,8 +281,7 @@ for l = 1:n_sim
         n2_duploss = 0;
     end
     
-    %n2_duploss = N2(2); % se asume que el segundo hará referencia al segundo y ultimo valor de N_c1 o N_c2. no deberian haber triple perdidas y perdidas unicas son inevitables
-    
+    % If duploss is detected, look for the max distance in pkts between both losses
     if (n1_duploss > 0)
         dup_idx1 = zeros(n1_duploss,1);
         idx1 = 1;
@@ -297,7 +299,8 @@ for l = 1:n_sim
         index1 = 0;
         index2 = 0;
         for k = 1:n1_duploss
-            value = c1_lossdata(dup_idx1(k));
+            uniq = unique(c1_lossdata);
+            value = uniq(dup_idx1(k));
             first = 1;
             for i = 1:length(c1_lossdata)
                 if(c1_lossdata(i) == value)
@@ -310,13 +313,9 @@ for l = 1:n_sim
                 end
             end
             distances1(k) = index2-index1;
-        end
-        
-        
-    else
-        
-        distances1 = [0];
-        
+        end       
+    else        
+        distances1 = [0];        
     end
     
     if (n2_duploss > 0)
@@ -336,7 +335,8 @@ for l = 1:n_sim
         index1 = 0;
         index2 = 0;
         for k = 1:n2_duploss
-            value = c2_lossdata(dup_idx2(k));
+            uniq = unique(c2_lossdata);
+            value = uniq(dup_idx2(k));
             first = 1;
             for i = 1:length(c2_lossdata)
                 if(c2_lossdata(i) == value)
@@ -349,13 +349,12 @@ for l = 1:n_sim
                 end
             end
             distances2(k) = index2-index1;
-    end    
-    
-        
+        end       
     else
         distances2 = [0];
     end
-       
+    
+    % Store data obtained in relevant variables
     c1_maxdist(l) = max(distances1);
     c2_maxdist(l) = max(distances2);
     c1_duploss(l) = n1_duploss;    

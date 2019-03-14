@@ -262,7 +262,7 @@ for i = 1:n_sim
     
     %% Qstats data
     lines = qstats_split{i+1}; 
-    formatSpec = '%f %f %f %f %f';
+    formatSpec = '%f %f %f %f %f';                                                  % pkts_inq, cur_qsize, q_delay, time, max_p
     Q = textscan(lines,formatSpec,'Delimiter','\n');
     
     %% Timeouts data
