@@ -1,14 +1,14 @@
-function y = chop_interval(data_array, time_array, dt_c1, dt_c2)
+function y = chop_interval(data_array, time_array, dt_c1, dt_c2, init_time)
     L = length(time_array);
-    c1_end = dt_c1+20;
-    c2_end = dt_c2+20;
+    c1_end = dt_c1+init_time;
+    c2_end = dt_c2+init_time;
     stop = min(c1_end,c2_end);
     
     begin_idx = 0;
     end_idx = 0;
     for i = 1:L
         if (begin_idx == 0)
-            if (time_array(i) >= 20)
+            if (time_array(i) >= init_time)
                 begin_idx = i;
             end
         else
@@ -20,9 +20,7 @@ function y = chop_interval(data_array, time_array, dt_c1, dt_c2)
     end
     
     chopped_array = zeros(end_idx - begin_idx + 1,1);
-    chopped_time = chopped_array;
-    begin_idx;
-    end_idx;
+    chopped_time = chopped_array;    
     idx = 1;
     for i = begin_idx:end_idx
         chopped_array(idx) = data_array(i);

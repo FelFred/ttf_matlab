@@ -159,7 +159,7 @@ for a = 1:num_alg
                                                                                     % according to smoothing flag value (always on lately)
                                                                                     
            % Get chopped array of qstats in the interval where both connections are alive
-           q_chopped = chop_interval(current_cell.qstats{1}{1}, current_cell.qstats{1}{4}, dt_array2(1,j,k,a), dt_array2(2,j,k,a));
+           q_chopped = chop_interval(current_cell.qstats{1}{1}, current_cell.qstats{1}{4}, dt_array2(1,j,k,a), dt_array2(2,j,k,a), init_time);
            qdata_chopped = q_chopped{1};
            
            % Get q data in different arrays for errorbar   (both from instantaneous measurements) 
