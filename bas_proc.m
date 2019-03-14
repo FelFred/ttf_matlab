@@ -215,33 +215,35 @@ for a = 1:num_alg
     end
 end
 
-%% Get avg and std for throughput, goodput and effective_throughput
-% Transform Inf to NaNs (Inf = connection failed)
+%% Average over seeds dimension
+
+% Get avg and std for throughput, goodput and effective_throughput. Transform Inf to NaNs (Inf = overestimation from wrong connection duration)
 th_array(th_array == Inf) = nan;
 
 % Get matrix average over seeds dimension (ignoring NaNs)
 th = squeeze(mean(th_array, 4, 'omitnan'));
     
-%% Get avg and std for (avg) queue size and queueing delay (queue size * delay_per_packet)
+% Get avg and std for (avg) queue size and queueing delay (queue size * delay_per_packet)
 q_array = mean(q_array,2,'omitnan');
 qstd_array = mean(qstd_array,2,'omitnan');
 
-%% Get avg for loss ratio arrays
+% Get avg for loss ratio arrays
 expected_lr = squeeze(mean(expected_array, 2, 'omitnan'));
 empiric_lr = squeeze(mean(empiric_array, 2, 'omitnan'));
 
-%% Get avg for connection duration arrays
+% Get avg for connection duration arrays
 dt_avg = squeeze(mean(dt_array, 3, 'omitnan'));
 
 %% Get timeout data arrays
 c1_timeouts = zeros(n_sim,1);
 c2_timeouts = zeros(n_sim,1);
 for l = 1:n_sim
+    % Get number of timeouts per simulation
     c1_timeouts(l) = length(results_cell{l}.timeouts{1}{1}) - 1;    
     c2_timeouts(l) = length(results_cell{l}.timeouts{2}{1}) - 1;
 end
 
-%% Get duploss per sim
+%% Get duploss per simulation
 c1_duploss = zeros(n_sim,1);
 c2_duploss = zeros(n_sim,1);
 c1_maxdist = zeros(n_sim,1);
