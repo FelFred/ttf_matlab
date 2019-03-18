@@ -8,11 +8,12 @@ end_time = 600;
 link_rate = 1e8;
 bg_pkt_size = 11744;
 c_pkt_size = 12064;
-window_size = 10;
+window_size = 1;
 full_util = link_rate*window_size;
 dt = 1;
 time_array = init_time:dt:end_time;
 percentage = zeros(length(time_array),1);
+util_array = zeros(3, length(time_array));
 
 
 %% Read data
@@ -60,6 +61,11 @@ for i = 1:length(time_array)
     
     % Calculate utilization dividing by full utilization
     percentage(i) = window_data / full_util;
+    c1_util = (c1_counter * c_pkt_size) / full_util;
+    c2_util = (c2_counter * c_pkt_size) / full_util;
+    bg_util = (bg_counter * bg_pkt_size) / full_util;
+    util_array(:,i) = [bg_util; c1_util ; c2_util ;];
+    
 end
 
 %% Plot results
@@ -70,5 +76,20 @@ title('Link utilization vs time')
 xlabel('Time [s]')
 ylabel('Utilization [%]')
 
+figure(fig_number)
+fig_number = fig_number + 1;
+bar(time_array, util_array', 'stacked')
+title('Link utilization vs time')
+xlabel('Time [s]')
+ylabel('Utilization [%]')
+legend('bg', 'c1', 'c2')
+
+figure(fig_number)
+fig_number = fig_number + 1;
+bar(time_array, util_array')
+title('Link utilization vs time')
+xlabel('Time [s]')
+ylabel('Utilization [%]')
+legend('bg', 'c1', 'c2')
 
 
