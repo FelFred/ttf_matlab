@@ -27,7 +27,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '10-Mar-2019_20-37-32';
+datasetStr = '18-Mar-2019_17-35-30';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
@@ -367,9 +367,14 @@ end
 
 %% Plot data
 
+% Choose desired th metric
+th_metric = 4;                                                                      % 1 -> current_cell.throughput{1}/{2}
+                                                                                    % 2 -> current_cell.goodput
+                                                                                    % 3 -> current_cell.th_eff
+                                                                                    % 4 -> current_cell.throughput{3}/{4}
+
 % Plot "th1" vs "th2" for a specific algorithm and metric (with "th" = th, gp or eff_th)
 specified_alg = 3;
-th_metric = 4;
 gp_array = squeeze(th(th_metric,:,:,:));
 figure(fig_number)
 fig_number = fig_number + 1;

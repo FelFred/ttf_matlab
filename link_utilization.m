@@ -1,6 +1,12 @@
+%% Clean stuff
+clear all
+close all
+clc
+
+
 %% Initialization
 
-file_path = 'C:\\D\\Sefe\\Universidad\\opnet\\link_output.txt';
+file_path = 'C:\\D\\Sefe\\Universidad\\opnet\\link_output 25-175 64.txt';
 fig_number = 1;
 
 init_time = 0;
@@ -8,7 +14,7 @@ end_time = 600;
 link_rate = 1e8;
 bg_pkt_size = 11744;
 c_pkt_size = 12064;
-window_size = 1;
+window_size = 0.2;
 full_util = link_rate*window_size;
 dt = 1;
 time_array = init_time:dt:end_time;
