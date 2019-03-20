@@ -396,7 +396,7 @@ gp_ratio = squeeze(gp_array(1,:,:)./gp_array(2,:,:));
 figure(fig_number)
 fig_number = fig_number + 1;
 xlabel('Simulation')
-ylabel('Goodput ratio (gp1/gp2)')
+ylabel('Throughput ratio (gp1/gp2)')
 plot(bg_array, gp_ratio(:,1), 'bx-')
 title('Fairness per simulation')
 hold on
@@ -406,7 +406,7 @@ plot(bg_array, gp_ratio(:,4), 'ko-')
 legend('ARED','RED','ARED - TTF','RED - TTF')
 plot(bg_array, ones(length(bg_array),1), 'r--')
 xlabel('Packet Interarrival Time [s]')
-ylabel('Goodput Ratio (Gp1/Gp2)')
+ylabel('Throughput Ratio (Th1/Th2)')
 %ylim([0.8 1.3])
 
 figure(fig_number)
@@ -425,13 +425,13 @@ x_plot = squeeze(th(th_metric,2,:,4));
 y_plot = squeeze(th(th_metric,1,:,4));
 plot(x_plot, y_plot, 'k.-', 'MarkerSize', 10)
 max_array = [th(th_metric,2,num_bg,1) th(th_metric,1,num_bg,1) th(th_metric,2,num_bg,2) th(th_metric,1,num_bg,2) th(th_metric,2,num_bg,3) th(th_metric,1,num_bg,3) th(th_metric,2,num_bg,4) th(th_metric,1,num_bg,4)];
-limit = 1.25 * max(max_array);
+limit = 1.1 * max(max_array);
 xlim([10^5 limit]) % 10^5 0.3*10^7 para 50-150 y 75-125
 ylim([10^5 limit])
-title('Goodput per connection (fairness plane)')
+title('Throughput per connection (fairness plane)')
 legend('ARED','RED','ARED - TTF','RED - TTF')
-xlabel('Goodput c2')
-ylabel('Goodput c1')
+xlabel('Throughput c2')
+ylabel('Throughput c1')
 plot([10^5 2*10^7], [10^5 2*10^7], 'm--')
 hold off
 
@@ -446,14 +446,14 @@ end
 figure(fig_number)
 fig_number = fig_number + 1;
 plot(bg_array, total_gp(:,1), 'bx-')
-title('Total goodput')
+title('Total Throughput')
 hold on
 plot(bg_array, total_gp(:,2), 'rx-')
 plot(bg_array, total_gp(:,3), 'bo--')
 plot(bg_array, total_gp(:,4), 'ro--')
 legend('ARED','RED','ARED - TTF','RED - TTF')
 xlabel('Packet Interarrival Time [s]')
-ylabel('Gp1 + Gp2')
+ylabel('Th1 + Th2')
 
 % Plot avg queue size vs bg traffic (RED_TTF)
 q_array = squeeze(q_array);
@@ -551,23 +551,23 @@ ttf_effect_red = ttf_effect_red';
 figure(fig_number)
 fig_number = fig_number + 1;
 bar(bg_array, ttf_effect_ared)
-title('TTF effect on goodput')
+title('TTF effect on throughput')
 hold on
 bar(bg_array,squeeze(target_ared(1,1,:)), 'FaceAlpha',0,'LineStyle', '--')
 legend('ARED c1','ARED+TTF c1','ARED c2','ARED+TTF c2', 'Expected avg')
 xlabel('Packet Interarrival Time [s]')
-ylabel('Goodput [bits/s]')
+ylabel('Throughputput [bits/s]')
 
 % Plot goodput evolution after ttf (RED)
 figure(fig_number)
 fig_number = fig_number + 1;
 bar(bg_array, ttf_effect_red)
-title('TTF effect on goodput')
+title('TTF effect on throughput')
 hold on
 bar(bg_array,squeeze(target_red(1,1,:)), 'FaceAlpha',0,'LineStyle', '--')
 legend('RED c1','RED+TTF c1','RED c2','RED+TTF c2', 'Expected avg')
 xlabel('Packet Interarrival Time [s]')
-ylabel('Goodput [bits/s]')
+ylabel('Throughput [bits/s]')
 
 % Plot timeouts per simulation 
 figure(fig_number)
