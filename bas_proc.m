@@ -27,26 +27,26 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '18-Mar-2019_17-35-30';
+datasetStr = '20-Mar-2019_12-46-45';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
 cd(results_path)
 
 % Get filename base string (same as the dataset folder)
-baseStr = ['./' datasetStr];                                    % .mat filenames start with the same string as the folder's name
+baseStr = ['./' datasetStr];                                                        % .mat filenames start with the same string as the folder's name
 
 % Get number of simulations of the dataset using dir command
 datasetFiles = dir('.');
-n_sim = size(datasetFiles,1) - 2;                               % 2 "files" would be "." and ".." in dir's output
+n_sim = size(datasetFiles,1) - 2;                                                   % 2 "files" would be "." and ".." in dir's output
 
 % Other parameters
-num_alg = 4;                                                    % RED, ARED (+TTF)
-num_bg = 9;                                                     % 9 pkt_iat values
+num_alg = 4;                                                                        % RED, ARED (+TTF)
+num_bg = 9;                                                                         % 9 pkt_iat values
 n_seeds = 3; 
-bg_end = 2000;                                                  % Manual input of bg traffic end (is it necessary?)
-fsize_conv_factor = 1000000;                                    % Used to get initial time due to OPNET's bug
-fig_number = 1;                                                 % Used for automatic numbering of figures
+bg_end = 2000;                                                                      % Manual input of bg traffic end (is it necessary?)
+fsize_conv_factor = 10^6;                                                           % Used to get initial time due to OPNET's bug
+fig_number = 1;                                                                     % Used for automatic numbering of figures
 
 %% Iterate over simulations and read structures (store in a cell) + sort data according to algorithm
 bgend_array = zeros(1,n_sim);                                                       % Stores the time at which bg traffic ended for each simulation
@@ -157,6 +157,15 @@ for a = 1:num_alg
            th_array(2, :, j, k, a) = [current_cell.goodput{1} current_cell.goodput{2}];
            th_array(3, :, j, k, a) = [current_cell.th_eff{1} current_cell.th_eff{2}];
            th_array(4, :, j, k, a) = [current_cell.throughput{3} current_cell.throughput{4}];
+          
+           % Get data for connection duration
+           dt_array(1,j,k,a) = current_cell.conn_dur{3};                            % using conn_dur values v1 (from tcp connection states)
+           dt_array(2,j,k,a) = current_cell.conn_dur{4};
+           
+           % Force connection duration using last value of cwnd
+           dt_array2(1,j,k,a) = current_cell.cwnd{2}{2}(end)-init_time;             % using cwnd data           
+           dt_array2(2,j,k,a) = current_cell.cwnd{1}{2}(end)-init_time;    
+           
            
            % Get queue related info           
            q_cell{j,k,a} = current_cell.qstats{1}{2};                               % 2 is cur_qsize = instantaneous or smoothed queue size
@@ -173,18 +182,10 @@ for a = 1:num_alg
            % Get q data in different arrays for errorbar   (both from instantaneous measurements) 
 %            q_array(j,k,a) = mean(current_cell.qstats{1}{1});
 %            qstd_array(j,k,a) = std(current_cell.qstats{1}{1});  
-           
+ 
            % Get data for loss ratio plot
            expected_array(j,k,a) = (current_cell.rtts{2}/current_cell.rtts{1})^2; 
-           empiric_array(j,k,a) = current_cell.loss{1}/current_cell.loss{2};
-           
-           % Get data for connection duration
-           dt_array(1,j,k,a) = current_cell.conn_dur{3};                            % using conn_dur values v1 (from tcp connection states)
-           dt_array(2,j,k,a) = current_cell.conn_dur{4};
-           
-           % Force connection duration using last value of cwnd
-           dt_array2(1,j,k,a) = current_cell.cwnd{2}{2}(end)-init_time;             % using cwnd data           
-           dt_array2(2,j,k,a) = current_cell.cwnd{1}{2}(end)-init_time;    
+           empiric_array(j,k,a) = current_cell.loss{1}/current_cell.loss{2};          
            
            % Check timeout 
            timeouts = length(current_cell.timeouts{1}{1}) - 1 + length(current_cell.timeouts{2}{1}) - 1;
@@ -368,7 +369,7 @@ end
 %% Plot data
 
 % Choose desired th metric
-th_metric = 4;                                                                      % 1 -> current_cell.throughput{1}/{2}
+th_metric = 1;                                                                      % 1 -> current_cell.throughput{1}/{2}
                                                                                     % 2 -> current_cell.goodput
                                                                                     % 3 -> current_cell.th_eff
                                                                                     % 4 -> current_cell.throughput{3}/{4}
@@ -461,7 +462,6 @@ figure(fig_number)
 fig_number = fig_number + 1;
 % errorbar(bg_array, q_array(:,1), qstd_array(:,1), 'bx')
 plot(bg_array, q_array(:,1), 'bx-')
-title('Average queue vs pkt interarrival time');
 hold on
 % errorbar(bg_array, q_array(:,2), qstd_array(:,2),'kx')
 % errorbar(bg_array, q_array(:,3), qstd_array(:,3),'mo')
@@ -469,6 +469,7 @@ hold on
 plot(bg_array, q_array(:,2),'kx-')
 plot(bg_array, q_array(:,3),'bo--')
 plot(bg_array, q_array(:,4),'ko--')
+title('Average queue vs pkt interarrival time');
 xlabel('Packet Interarrival Time [s]')
 ylabel('Avg Queue size [pkts]')
 legend('ARED','RED','ARED - TTF','RED - TTF')
@@ -480,7 +481,6 @@ figure(fig_number)
 fig_number = fig_number + 1;
 % errorbar(bg_array, q_array(:,1), qstd_array(:,1), 'bx')
 plot(bg_array, qstd_array(:,1), 'bx-')
-title('Average Queue Standard Deviation vs pkt interarrival time');
 hold on
 % errorbar(bg_array, q_array(:,2), qstd_array(:,2),'kx')
 % errorbar(bg_array, q_array(:,3), qstd_array(:,3),'mo')
@@ -488,6 +488,7 @@ hold on
 plot(bg_array, qstd_array(:,2),'kx-')
 plot(bg_array, qstd_array(:,3),'bo--')
 plot(bg_array, qstd_array(:,4),'ko--')
+title('Average Queue Standard Deviation vs pkt interarrival time');
 xlabel('Packet Interarrival Time [s]')
 ylabel('Avg Queue Size Standard Deviation [pkts]')
 legend('ARED','RED','ARED - TTF','RED - TTF')

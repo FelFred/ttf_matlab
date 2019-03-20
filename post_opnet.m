@@ -168,7 +168,7 @@ for i = 1:n_sim
     end
     
     %% Fsize 
-    lines = strsplit(F1_split{i+1}, '\r\n');  % just 1 line in this case (2 but the last is empty and useless)
+    lines = strsplit(F1_split{i+1}, '\r\n');                                        % just 1 line in this case (2 but the last is empty and useless)
     tline = lines{1};
     formatSpec = '%f';
     line_data = textscan(tline,formatSpec);
@@ -192,21 +192,24 @@ for i = 1:n_sim
     formatSpec = '%f';
     D = textscan(lines,formatSpec,'Delimiter','\n');
     
+    init_time = (f_size/8)/10^6;
     dt_c1_v1 = D_0{1}(end) - D_0{1}(end-1);
     dt_c2_v1 = D{1}(end) - D{1}(end-1);
-    dt_c1 = C_0{2}(end) - (f_size/8)/10^6;
-    dt_c2 = C{2}(end) - (f_size/8)/10^6;
+    dt_c1 = C_0{2}(end) - init_time;
+    dt_c2 = C{2}(end) - init_time;
     %% Throughput, goodput and eff throughput
     
     % Goodput per connection
-    goodput_simulado_c1 = f_size/dt_c1; % should be in bytes without x8 factor
-    goodput_simulado_c2 = f_size/dt_c2; % should be in bytes without x8 factor
+    goodput_simulado_c1 = f_size/dt_c1;                                             % should be in bytes without x8 factor
+    goodput_simulado_c2 = f_size/dt_c2;                                             % should be in bytes without x8 factor
 
     % Throughout per connection
-    avg_cwnd_c1 = mean(C_0{1});
-    avg_cwnd_c2 = mean(C{1});   
-    th_sim_c1 = 8*avg_cwnd_c1/rtt1; % should be in bytes without x8 factor
-    th_sim_c2 = 8*avg_cwnd_c2/rtt2; % should be in bytes without x8 factor
+    cwnd_chopped_c1 = chop_interval(C_0{1}, C_0{2}, dt_c1, dt_c2, init_time);    
+    cwnd_chopped_c2 = chop_interval(C{1}, C{2},  dt_c1, dt_c2, init_time);
+    avg_cwnd_c1 = mean(cwnd_chopped_c1{1});
+    avg_cwnd_c2 = mean(cwnd_chopped_c2{1});   
+    th_sim_c1 = 8*avg_cwnd_c1/rtt1;                                                 % should be in bytes without x8 factor
+    th_sim_c2 = 8*avg_cwnd_c2/rtt2;                                                 % should be in bytes without x8 factor
     
     % Effective throughput
     overhead_factor = (1500+8)/1460;
