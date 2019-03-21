@@ -27,7 +27,7 @@ clc
 %% Parameters
 
 % Choose dataset manually
-datasetStr = '20-Mar-2019_12-46-45';
+datasetStr = '20-Mar-2019_22-10-00';
 results_path = ['./resultados/' datasetStr '/'];
 
 % Change directory to dataset path
