@@ -528,10 +528,12 @@ for l = 1:4
         target1_red = gp_array(1,j,2)*rtt1/0.1;
         target2_red = gp_array(2,j,2)*rtt2/0.1;
         
-        target_value_ared = (target1_ared + target2_ared)/2;
-        target_value_red = (target1_red + target2_red)/2;        
+%       target_value_ared = (target1_ared + target2_ared)/2;
+%       target_value_red = (target1_red + target2_red)/2;        
 %       target_value_ared = target2_ared;
 %       target_value_red = target2_red;
+        target_value_ared = (gp_array(1,j,1) + gp_array(2,j,1))/2;
+        target_value_red = (gp_array(1,j,2) + gp_array(2,j,2))/2;
 
 
         target_ared(:,1,j) = [bg_array(j)-delta_bg*0.3 bg_array(j)+delta_bg*0.3];
@@ -554,7 +556,7 @@ bar(bg_array, ttf_effect_ared)
 title('TTF effect on throughput')
 hold on
 bar(bg_array,squeeze(target_ared(1,1,:)), 'FaceAlpha',0,'LineStyle', '--')
-legend('ARED c1','ARED+TTF c1','ARED c2','ARED+TTF c2', 'Expected avg')
+legend('ARED c1','ARED+TTF c1','ARED c2','ARED+TTF c2', 'Expected')
 xlabel('Packet Interarrival Time [s]')
 ylabel('Throughputput [bits/s]')
 
@@ -565,7 +567,7 @@ bar(bg_array, ttf_effect_red)
 title('TTF effect on throughput')
 hold on
 bar(bg_array,squeeze(target_red(1,1,:)), 'FaceAlpha',0,'LineStyle', '--')
-legend('RED c1','RED+TTF c1','RED c2','RED+TTF c2', 'Expected avg')
+legend('RED c1','RED+TTF c1','RED c2','RED+TTF c2', 'Expected')
 xlabel('Packet Interarrival Time [s]')
 ylabel('Throughput [bits/s]')
 
