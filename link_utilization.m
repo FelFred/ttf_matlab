@@ -21,6 +21,13 @@ time_array = init_time:dt:end_time;
 percentage = zeros(length(time_array),1);
 util_array = zeros(3, length(time_array));
 
+file_size = 80000000;
+fsize_conv_factor = 10^6;
+c_init_time = file_size / fsize_conv_factor;
+c1_end = 0;
+c2_end = 0;
+
+
 
 %% Read data
 output_data = fileread(file_path);
@@ -60,10 +67,20 @@ for i = 1:length(time_array)
             end            
         end                
     end
-%     bg_counter
-%     c1_counter
-%     c2_counter
+    
+    if (c1_counter == 0 && c1_end == 0 && ti > c_init_time)
+        c1_end= ti;
+        disp(['c1 end at time ' num2str(ti)])
+    end
+    if (c2_counter == 0 && c2_end == 0 && ti > c_init_time)
+        c2_end = ti;        
+        disp(['c2 end at time ' num2str(ti)])
+    end
+    % Estimación hecha por código anterior es lo suficientemente exacta si se compara con datos del gráfico 2 al menos.
+    % Datos de begin_end_c1 y begin_end_c2: 185.455041099329 , 291.089324782613
+
     window_data = bg_counter * bg_pkt_size + (c1_counter+c2_counter) * c_pkt_size;
+    
     
     % Calculate utilization dividing by full utilization
     percentage(i) = window_data / full_util;
@@ -81,6 +98,9 @@ bar(time_array, percentage')
 title('Link utilization vs time')
 xlabel('Time [s]')
 ylabel('Utilization [%]')
+% print -depsc MySavedPlot
+% print -dpng MySavedPlot
+
 
 figure(fig_number)
 fig_number = fig_number + 1;
@@ -89,6 +109,7 @@ title('Link utilization vs time')
 xlabel('Time [s]')
 ylabel('Utilization [%]')
 legend('bg', 'c1', 'c2')
+print -dpng MySavedPlot
 
 figure(fig_number)
 fig_number = fig_number + 1;
