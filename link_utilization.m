@@ -1,3 +1,9 @@
+%% Info
+
+% v1: utilization is approximated. 
+
+
+
 %% Clean stuff
 clear all
 close all
@@ -6,7 +12,7 @@ clc
 
 %% Initialization
 
-file_path = 'C:\\D\\Sefe\\Universidad\\opnet\\link_output 25-175 91.txt';
+file_path = 'C:\\D\\Sefe\\Universidad\\opnet\\link_output 25-175 91 v2.txt';
 fig_number = 1;
 
 init_time = 0;
