@@ -6,7 +6,7 @@ clc
 
 %% Initialization
 
-file_path = 'C:\\D\\Sefe\\Universidad\\opnet\\link_output 25-175 64.txt';
+file_path = 'C:\\D\\Sefe\\Universidad\\opnet\\link_output 25-175 91.txt';
 fig_number = 1;
 
 init_time = 0;
@@ -24,10 +24,11 @@ util_array = zeros(3, length(time_array));
 file_size = 80000000;
 fsize_conv_factor = 10^6;
 c_init_time = file_size / fsize_conv_factor;
+c_init_delayed = c_init_time + 5; 
 c1_end = 0;
 c2_end = 0;
 
-
+addpath('./funciones/');
 
 %% Read data
 output_data = fileread(file_path);
@@ -68,6 +69,8 @@ for i = 1:length(time_array)
         end                
     end
     
+    % Estimación hecha por código anterior es lo suficientemente exacta si se compara con datos del gráfico 2 al menos.
+    % Datos de begin_end_c1 y begin_end_c2: 185.455041099329 , 291.089324782613
     if (c1_counter == 0 && c1_end == 0 && ti > c_init_time)
         c1_end= ti;
         disp(['c1 end at time ' num2str(ti)])
@@ -76,20 +79,25 @@ for i = 1:length(time_array)
         c2_end = ti;        
         disp(['c2 end at time ' num2str(ti)])
     end
-    % Estimación hecha por código anterior es lo suficientemente exacta si se compara con datos del gráfico 2 al menos.
-    % Datos de begin_end_c1 y begin_end_c2: 185.455041099329 , 291.089324782613
-
-    window_data = bg_counter * bg_pkt_size + (c1_counter+c2_counter) * c_pkt_size;
     
+    % Get total data in current windoww
+    window_data = bg_counter * bg_pkt_size + (c1_counter+c2_counter) * c_pkt_size;    
     
     % Calculate utilization dividing by full utilization
-    percentage(i) = window_data / full_util;
+    percentage(i) = 100 * window_data / full_util;
     c1_util = (c1_counter * c_pkt_size) / full_util;
     c2_util = (c2_counter * c_pkt_size) / full_util;
     bg_util = (bg_counter * bg_pkt_size) / full_util;
     util_array(:,i) = [bg_util; c1_util ; c2_util ;];
     
 end
+
+%% Get avg utilizacion in the interval where both connections are active
+
+% Get chopped array of total utilization measured in percentage 
+total_util_chopped = chop_interval(percentage, time_array, c1_end-10-c_init_time, c2_end-10-c_init_time, c_init_delayed);
+avg_util = mean(total_util_chopped{1});
+disp (['Avg utilization while competing = ' num2str(avg_util) '%'])
 
 %% Plot results
 figure(fig_number)

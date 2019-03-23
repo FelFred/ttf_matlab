@@ -1,8 +1,8 @@
 function y = chop_interval(data_array, time_array, dt_c1, dt_c2, init_time)
     L = length(time_array);
-    c1_end = dt_c1+init_time;
-    c2_end = dt_c2+init_time;
-    stop = min(c1_end,c2_end);
+    c1_end = dt_c1+init_time
+    c2_end = dt_c2+init_time
+    stop = min(c1_end,c2_end)
     
     begin_idx = 0;
     end_idx = 0;
