@@ -1,8 +1,8 @@
 %% Info
 
-% v1: utilization is approximated. 
-% v2: utilization is no longer an approximation. Partial pkts in window are
-% considered now.
+% DONE      v1: utilization is approximated. 
+% DONE      v2: utilization is no longer an approximation. Partial pkts in window are considered now.
+% PENDING   v3: add option to get connection duration from data files?
 
 
 %% Clean stuff
@@ -24,7 +24,7 @@ c_pkt_size = 12064;
 window_size = 0.2;
 full_util = link_rate*window_size;
 dt = window_size * 2;                                                               % minimo para asegurar que no hay traslape , todos se muestrea
-% dt = 1;                                                                             % debe ser divisor de end_time o se tendrá un error
+% dt = 1;                                                                           % debe ser divisor de end_time o se tendrá un error
 time_array = init_time:dt:end_time;
 percentage = zeros(length(time_array),1);
 util_array = zeros(3, length(time_array));

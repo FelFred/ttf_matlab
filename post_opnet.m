@@ -279,7 +279,7 @@ for i = 1:n_sim
     
     %% Loss pdf data    
     lines = lpdf_split{i+1}; 
-    formatSpec = '%f %f %f %f %f %f';
+    formatSpec = '%f %f %f %f %f %f';                                               % cur_qsize, var_loss, cur_seq, time, port, outcome
     P = textscan(lines,formatSpec,'Delimiter','\n');    
     
     %% Destroyed pkts data
@@ -324,6 +324,7 @@ for i = 1:n_sim
     algStr = num2str(alg_no);
     results_path = strcat('./resultados/', dirStr,'/');
     full_path = [results_path dirStr ' ' algStr ' ' num2str(i) '.mat'];
+    disp(['Processed sim number: ' num2str(i) ', saving to: ' full_path])
     %full_path = strcat(results_path, newStr, blanks(1), algStr, blanks(1),num2str(i), '.mat');
     save(full_path, 'results_struct')
     

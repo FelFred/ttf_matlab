@@ -1,5 +1,7 @@
-%% Code description
-
+%% Clean stuff
+clear all
+close all
+clc
 
 %% Pkt_iat to bg input throughput
 rtt1 = 0.05;

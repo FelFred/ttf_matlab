@@ -60,7 +60,7 @@ idx3 = 1;
 idx4 = 1;
 for i = 1:n_sim
    % Get name from structure
-   fileName = datasetFiles(i+2).name;                           % Skip first 2 (. and ..)
+   fileName = datasetFiles(i+2).name;                           % Skip first 2 (. and ..)  
    
    % Prepare variable name
    results_struct = struct([]);                                 % Creates empty structure
@@ -138,7 +138,9 @@ qstd_array = zeros(num_bg, n_seeds, num_alg);                                   
 % Others
 bg_array = zeros(num_bg,1);                                                         % will store all pkt_iat values
 expected_array = zeros(num_bg,n_seeds, num_alg);                                    % will store loss ratio expected from rtts
-empiric_array = zeros(num_bg,n_seeds, num_alg);                                     % will store empiric loss ratio obtained                 
+empiric_array = zeros(num_bg,n_seeds, num_alg);                                     % will store empiric loss ratio obtained          
+lpdf_array = zeros(num_bg,n_seeds, num_alg);                                        % will store loss ratio from probability seen at queue          
+loss_array = zeros(2, num_bg,n_seeds, num_alg);                                        % will store avg loss prob seen at queue for each connection
 dt_array = zeros(2,num_bg, n_seeds, num_alg);                                       % will store connection duration obtained from cwnd data
 dt_array2 = zeros(2,num_bg, n_seeds, num_alg);                                      % will store connection duration obtained from tcp connection states
 init_time = results_cell{1}.file_size{1}/8/fsize_conv_factor;                       % tx begin time (determined by file size)
@@ -171,7 +173,7 @@ for a = 1:num_alg
            q_cell{j,k,a} = current_cell.qstats{1}{2};                               % 2 is cur_qsize = instantaneous or smoothed queue size
                                                                                     % according to smoothing flag value (always on lately)
                                                                                     
-           % Get chopped array of qstats in the interval where both connections are alive
+           % Get chopped array of ç in the interval where both connections are alive
            q_chopped = chop_interval(current_cell.qstats{1}{1}, current_cell.qstats{1}{4}, dt_array2(1,j,k,a), dt_array2(2,j,k,a), init_time);
            qdata_chopped = q_chopped{1};
            
@@ -183,9 +185,37 @@ for a = 1:num_alg
 %            q_array(j,k,a) = mean(current_cell.qstats{1}{1});
 %            qstd_array(j,k,a) = std(current_cell.qstats{1}{1});  
  
-           % Get data for loss ratio plot
+           % Get data for loss ratio plot (based on total loss)
            expected_array(j,k,a) = (current_cell.rtts{2}/current_cell.rtts{1})^2; 
-           empiric_array(j,k,a) = current_cell.loss{1}/current_cell.loss{2};          
+           empiric_array(j,k,a) = current_cell.loss{1}/current_cell.loss{2};
+           
+           % Get data for loss ratio plot (based on probability seen at queue) and avg for each connection
+           c1_lpdf_data = zeros(length(current_cell.loss_pdf{1}{1}),1);
+           c1_lpdf_time = c1_lpdf_data;
+           c2_lpdf_data = c1_lpdf_data;
+           c2_lpdf_time = c1_lpdf_data;
+           c1_lpdf_idx = 1;
+           c2_lpdf_idx = 1;
+           
+           for v = 1:length(current_cell.loss_pdf{1}{1})
+                if (current_cell.loss_pdf{1}{5}(v) == 1)
+                    c1_lpdf_data(c1_lpdf_idx) = current_cell.loss_pdf{1}{2}(v);
+                    c1_lpdf_time(c1_lpdf_idx) = current_cell.loss_pdf{1}{4}(v);
+                    c1_lpdf_idx = c1_lpdf_idx + 1;
+                elseif (current_cell.loss_pdf{1}{5}(v) == 3)                    
+                    c2_lpdf_data(c2_lpdf_idx) = current_cell.loss_pdf{1}{2}(v);
+                    c2_lpdf_time(c2_lpdf_idx) = current_cell.loss_pdf{1}{4}(v);
+                    c2_lpdf_idx = c2_lpdf_idx + 1;
+                end
+           end
+           
+           c1_lpdf_chopped = chop_interval(c1_lpdf_data, c1_lpdf_time, dt_array2(1,j,k,a)-5, dt_array2(2,j,k,a)-5, init_time);
+           c2_lpdf_chopped = chop_interval(c2_lpdf_data, c2_lpdf_time, dt_array2(1,j,k,a)-5, dt_array2(2,j,k,a)-5, init_time);
+           c1_lpdf_avgd = mean(c1_lpdf_chopped{1})
+           c2_lpdf_avgd = mean(c2_lpdf_chopped{1})
+           loss_array(1,j,k,a) = c1_lpdf_avgd;
+           loss_array(2,j,k,a) = c2_lpdf_avgd;
+           lpdf_array(j,k,a) = c1_lpdf_avgd/c2_lpdf_avgd;           
            
            % Check timeout 
            timeouts = length(current_cell.timeouts{1}{1}) - 1 + length(current_cell.timeouts{2}{1}) - 1;
@@ -235,6 +265,8 @@ qstd_array = mean(qstd_array,2,'omitnan');
 % Get avg for loss ratio arrays
 expected_lr = squeeze(mean(expected_array, 2, 'omitnan'));
 empiric_lr = squeeze(mean(empiric_array, 2, 'omitnan'));
+prob_lr = squeeze(mean(lpdf_array, 2, 'omitnan'));
+conn_loss = squeeze(mean(loss_array, 3, 'omitnan'));
 
 % Get avg for connection duration arrays
 dt_avg = squeeze(mean(dt_array, 3, 'omitnan'));
@@ -403,7 +435,8 @@ hold on
 plot(bg_array, gp_ratio(:,2), 'kx-')
 plot(bg_array, gp_ratio(:,3), 'bo-')
 plot(bg_array, gp_ratio(:,4), 'ko-')
-legend('ARED','RED','ARED - TTF','RED - TTF')
+plot(bg_array, sqrt(expected_array(1,1,1)*ones(length(bg_array),1)), 'm--')
+legend('ARED','RED','ARED - TTF','RED - TTF', 'Expected ratio')
 plot(bg_array, ones(length(bg_array),1), 'r--')
 xlabel('Packet Interarrival Time [s]')
 ylabel('Throughput Ratio (Th1/Th2)')
@@ -508,6 +541,48 @@ xlabel('Packet Interarrival Time [s]')
 ylabel('Loss ratio (p1/p2)')
 %ylim([0 1.3*expected_array(1,1)])
 ylim([0 1.3*max([max(empiric_lr(:,1)), max(empiric_lr(:,2)), max(empiric_lr(:,3)), max(empiric_lr(:,4))])])
+
+% Plot avg loss ratio vs pkt_iat
+figure(fig_number)
+fig_number = fig_number + 1;
+plot(bg_array, prob_lr(:,1), 'b*-')
+title('Loss probability ratio')
+hold on
+plot(bg_array, prob_lr(:,2), 'k*-')
+plot(bg_array, prob_lr(:,3), 'bx-')
+plot(bg_array, prob_lr(:,4), 'kx-')
+legend('ARED','RED','ARED - TTF','RED - TTF')
+plot(bg_array, expected_array(:,1), 'r--')
+xlabel('Packet Interarrival Time [s]')
+ylabel('Loss ratio (p1/p2)')
+%ylim([0 1.3*expected_array(1,1)])
+ylim([0 1.3*max([max(prob_lr(:,1)), max(prob_lr(:,2)), max(prob_lr(:,3)), max(prob_lr(:,4))])])
+
+% Plot average pdf vs pkt_iat : ARED
+figure(fig_number)
+fig_number = fig_number + 1;
+plot(bg_array, conn_loss(1,:,1), 'b*-')
+title('Avg loss probability per connection, ARED')
+hold on
+plot(bg_array, conn_loss(1,:,3), 'k*-')
+plot(bg_array, conn_loss(2,:,1), 'bx-')
+plot(bg_array, conn_loss(2,:,3), 'kx-')
+legend('ARED c1','ARED+TTF c1','ARED c2','ARED+TTF c2')
+xlabel('Packet Interarrival Time [s]')
+ylabel('Avg loss probability [s]')
+
+% Plot average pdf vs pkt_iat : RED
+figure(fig_number)
+fig_number = fig_number + 1;
+plot(bg_array, conn_loss(1,:,2), 'b*-')
+title('Avg loss probability per connection, RED')
+hold on
+plot(bg_array, conn_loss(1,:,4), 'k*-')
+plot(bg_array, conn_loss(2,:,2), 'bx-')
+plot(bg_array, conn_loss(2,:,4), 'kx-')
+legend('RED c1','RED+TTF c1','RED c2','RED+TTF c2')
+xlabel('Packet Interarrival Time [s]')
+ylabel('Avg loss probability [s]')
 
 % Plot TTF effect on goodput (over ARED)
 ttf_effect_ared = zeros(4,num_bg);
@@ -651,6 +726,8 @@ legend('RED c1','RED+TTF c1','RED c2','RED+TTF c2')
 %plot(bg_array, expected_array(:,1), 'r--')
 xlabel('Packet Interarrival Time [s]')
 ylabel('Connection duration [s]')
+
+
 
 %% Additional stuff: connection duration vs sim number (1), loss rate vs time and seq_num vs time for each connection (2)
 
@@ -807,6 +884,10 @@ end
 % title('Outcome vs time c2')
 % xlabel('Time[s]')
 % ylabel('Outcome')
+
+%% Plot queue of a particular simulation
+
+
 
 %% Save results in .mat
 f1 = 'th';
