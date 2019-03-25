@@ -211,8 +211,8 @@ for a = 1:num_alg
            
            c1_lpdf_chopped = chop_interval(c1_lpdf_data, c1_lpdf_time, dt_array2(1,j,k,a)-5, dt_array2(2,j,k,a)-5, init_time);
            c2_lpdf_chopped = chop_interval(c2_lpdf_data, c2_lpdf_time, dt_array2(1,j,k,a)-5, dt_array2(2,j,k,a)-5, init_time);
-           c1_lpdf_avgd = mean(c1_lpdf_chopped{1})
-           c2_lpdf_avgd = mean(c2_lpdf_chopped{1})
+           c1_lpdf_avgd = mean(c1_lpdf_chopped{1});
+           c2_lpdf_avgd = mean(c2_lpdf_chopped{1});
            loss_array(1,j,k,a) = c1_lpdf_avgd;
            loss_array(2,j,k,a) = c2_lpdf_avgd;
            lpdf_array(j,k,a) = c1_lpdf_avgd/c2_lpdf_avgd;           
@@ -887,7 +887,15 @@ end
 
 %% Plot queue of a particular simulation
 
-
+desired_cell = results_cell{34};
+q_pkts = desired_cell.qstats{1}{1};
+q_time = desired_cell.qstats{1}{4};
+figure(fig_number)                           
+fig_number = fig_number + 1;                                            
+plot(q_time, q_pkts, 'b')
+title('Queue size vs time')
+xlabel('Time[s]')
+ylabel('Queue size[pkts]')
 
 %% Save results in .mat
 f1 = 'th';
